@@ -1,0 +1,107 @@
+services:
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - VPN_SERVICE_PROVIDER=custom
+      - VPN_TYPE=openvpn
+      - OPENVPN_CUSTOM_CONFIG=/gluetun/vpn.ovpn
+      - DOT=off
+      - FIREWALL_VPN_INPUT_PORTS=51413
+      - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/16,10.0.0.0/8
+      - DNS_ADDRESS=1.1.1.1
+      - BLOCK_MALICIOUS=off
+      - BLOCK_SURVEILLANCE=off
+      - BLOCK_ADS=off
+    volumes:
+      - ./gluetun:/gluetun
+    ports:
+      - "9091:9091"       # Transmission Web UI
+      - "51413:51413"     # Transmission peer port
+      - "51413:51413/udp"
+      - "5050:5050"       # FlexGet Web UI
+    restart: unless-stopped
+    networks:
+      - default
+
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    network_mode: "service:gluetun"  # Sale a Internet SOLO por la VPN
+    depends_on:
+      - gluetun
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
+      - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_USER}
+      - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_PASS}
+      - TRANSMISSION_RPC_ENABLED=true
+      - TRANSMISSION_RPC_BIND_ADDRESS=0.0.0.0
+      - TRANSMISSION_RPC_PORT=${TRANSMISSION_PORT}
+      - TRANSMISSION_RPC_WHITELIST_ENABLED=false
+      - TRANSMISSION_DOWNLOAD_DIR=${DOWNLOADS_PATH}/complete
+      - TRANSMISSION_INCOMPLETE_DIR_ENABLED=true
+      - TRANSMISSION_INCOMPLETE_DIR=${DOWNLOADS_PATH}/incomplete
+      - TRANSMISSION_WATCH_DIR_ENABLED=true
+      - TRANSMISSION_WATCH_DIR=/watch
+      - TZ=${TZ}
+    volumes:
+      - ./transmission/config:/config
+      - ${MEDIA_PATH}${DOWNLOADS_PATH}:${DOWNLOADS_PATH}
+      - ${MEDIA_PATH}${DOWNLOADS_PATH}/watch:/watch
+    restart: unless-stopped
+
+  flexget:
+    image: wiserain/flexget:3.5
+    container_name: flexget
+    network_mode: "service:gluetun"  # También a través de la VPN
+    depends_on:
+      - gluetun
+      - transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - FG_WEBUI_PASSWD=${FG_WEBUI_PASSWD}
+      - TORRENT_PLUGIN=transmission
+      - FG_LOG_LEVEL=info
+      - TRANSMISSION_HOST=${TRANSMISSION_HOST}
+      - TRANSMISSION_PORT=${TRANSMISSION_PORT}
+      - TRANSMISSION_USER=${TRANSMISSION_USER}
+      - TRANSMISSION_PASS=${TRANSMISSION_PASS}
+      - TZ=${TZ}
+    volumes:
+      - ./flexget/config:/config
+      - ./flexget/config/custom-cont-init.d:/custom-cont-init.d
+      - ${MEDIA_PATH}/downloads:/downloads
+      - ${MEDIA_PATH}/movies:/movies
+      - ${MEDIA_PATH}/series:/series
+      - ${MEDIA_PATH}/animes:/animes
+    restart: unless-stopped
+
+  plex:
+    image: linuxserver/plex:latest
+    container_name: plex
+    # Opción 1: Host networking (como tienes ahora)
+    network_mode: host
+    hostname: plex
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - VERSION=docker
+      - TZ=${TZ}
+    volumes:
+      - ./plex/config:/config
+      - ${MEDIA_PATH}/movies:/movies:ro
+      - ${MEDIA_PATH}/series:/series:ro
+      - ${MEDIA_PATH}/animes:/animes:ro
+    restart: unless-stopped
+
+networks:
+  default:
+    name: media-automation

@@ -1,0 +1,37 @@
+# Environment files
+.env
+.env.local
+.env.production
+
+# Docker
+docker-compose.override.yml
+
+# Plex data
+plex/Library/
+plex/Logs/
+plex/Cache/
+plex/Crash Reports/
+plex/Diagnostics/
+
+# Transmission data - ignorar todo excepto configuración
+transmission/*
+!transmission/config/
+!transmission/config/settings.json
+
+# Flexget - ignorar todo excepto configuración
+flexget/*
+!flexget/config/
+!flexget/config/config.yml
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
