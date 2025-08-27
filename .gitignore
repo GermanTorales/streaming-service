@@ -7,21 +7,20 @@
 docker-compose.override.yml
 
 # Plex data
-plex/Library/
-plex/Logs/
-plex/Cache/
-plex/Crash Reports/
-plex/Diagnostics/
+plex/*
+
+# Gluetun
+gluetun/*
 
 # Transmission data - ignorar todo excepto configuración
 transmission/*
-!transmission/config/
 !transmission/config/settings.json
 
 # Flexget - ignorar todo excepto configuración
 flexget/*
-!flexget/config/
+!flexget/config
 !flexget/config/config.yml
+!flexget/config/custom-cont-init.d
 
 # Logs
 *.log

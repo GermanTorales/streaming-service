@@ -15,56 +15,17 @@ schedules:
       hours: 6
 
 templates:
-  transmission_client:
-    transmission:
-      host: "{{ env('TRANSMISSION_HOST') }}"
-      port: 9091
-      username: "{{ env('TRANSMISSION_USER') }}"
-      password: "{{ env('TRANSMISSION_PASS') }}"
-
-  common_rejects:
+  global:
     regexp:
       reject:
         # Rechazar calidades muy malas
         - (?i)\b(HDCAM|CAM|TS|TELESYNC|HDTS|SCREENER|WORKPRINT)\b: { from: title }
-        # Rechazar 12bit
+        # Rechazar audio 12bit
         - (?i)\b(12bit|hi12|hi12p)\b: { from: title }
-        # Rechazar series
-        - (?i)s\d{1,2}e\d{1,2}: { from: title }
-        - (?i)season?\s?\d+: { from: title }
-        - (?i)complete: { from: title }
-        # Rechazar codecs de audio problemáticos
-        - (?i)\b(truehd|dts-hd)\b: { from: title }
+
     torrent_alive: 5
     magnets: yes
 
-  anime_template:
-    seen: local
-    no_entries_ok: yes
-    priority: 12
-    regexp:
-      reject:
-        # Rechazar calidades muy malas
-        - (?i)\b(HDCAM|CAM|TS|TELESYNC|HDTS|SCREENER|WORKPRINT)\b: { from: title }
-        # Rechazar 12bit
-        - (?i)\b(12bit|hi12|hi12p)\b: { from: title }
-        # Rechazar películas
-        - (?i)\b(movie|pelicula|film|gekijouban|compilation)\b: { from: title }
-        # Rechazar doblajes
-        - (?i)\b(dubbed|dub|english\s+audio|spanish\s+audio)\b: { from: title }
-        - (?i)\b(latino|castellano|español)\b: { from: title }
-        # Rechazar versiones sin subtitulos
-        - (?i)\b(raw|no\s+sub)\b: { from: title }
-      accept:
-        # Aceptar subtitulos en inglés/spanish
-        - (?i)\b(eng|english|spa|spanish|multi)\s+(sub|subtitle): { from: title }
-        # Aceptar grupos conocidos de fansubs de calidad
-        - (?i)\[(SubsPlease|Erai-raws|ASW|EMBER|Judas)\]: { from: title }
-        # Aceptar batch/season packs
-        - (?i)\b(batch|complete|season)\b: { from: title }
-    content_size:
-      max: 15000
-      min: 500
     content_filter:
       strict: no
       require:
@@ -75,74 +36,87 @@ templates:
         - 'password'
         - '*.rar'
         - '*.zip'
-    torrent_alive: 5
-    magnets: yes
 
-  tv_template:
-    tmdb_lookup: yes
+  transmission_client:
+    transmission:
+      host: localhost
+      port: 9091
+      username: "{{ env('TRANSMISSION_USER') }}"
+      password: "{{ env('TRANSMISSION_PASS') }}"
+
+  media_base:
     seen: local
     no_entries_ok: yes
-    priority: 15
     regexp:
       reject:
         # Rechazar idiomas no deseados
         - (?i)\b(korean|chinese|japanese|german|french|italian|russian)\s+(audio|dub)\b: { from: title }
         # Rechazar hardcoded subs
         - (?i)\bhc\s+(kor|chi|jap|ger|fre|ita|rus): { from: title }
-        # Rechazar películas
-        - (?i)\b(bluray|brrip|bdrip)\b.*(?i)\b(complete|trilogy)\b: { from: title }
       accept:
-        # Preferir subs en inglés/español
         - (?i)\b(eng|english|spa|spanish|multi)\s+(sub|subtitle): { from: title }
-        # Aceptar season packs
-        - (?i)\b(season|complete)\b: { from: title }
-    content_size:
-      max: 50000
-      min: 500
-    content_filter:
-      strict: no
-      require:
-        - '*.mkv'
-        - '*.mp4'
-        - '*.avi'
-      reject:
-        - 'password'
-        - '*.rar'
-        - '*.zip'
-
-  movies_template:
+  
+  movies_base:
+    template: media_base
     imdb_lookup: yes
     tmdb_lookup: yes
-    seen: local
-    no_entries_ok: yes
     priority: 10
-    regexp:
-      reject:
-        # Rechazar releases con idiomas específicos
-        - (?i)\b(korean|chinese|japanese|german|french|italian|russian)\s+(audio|dub)\b: { from: title }
-        # Rechazar hardcoded subs
-        - (?i)\bhc\s+(kor|chi|jap|ger|fre|ita|rus): { from: title }
-      accept:
-        # Preferir releases con indicación de subs en inglés/español
-        - (?i)\b(eng|english|spa|spanish|multi)\s+(sub|subtitle): { from: title }
     content_size:
       max: 20000
       min: 1500
-    content_filter:
-      strict: no
-      require:
-        - '*.mkv'
-        - '*.mp4'
-        - '*.avi'
+
+  tv_base:
+    template: media_base
+    tmdb_lookup: yes
+    priority: 15
+    content_size:
+      max: 50000
+      min: 500
+    regexp:
       reject:
-        - 'password'
-        - '*.rar'
-        - '*.zip'
+        # Rechazar peliculas
+        - (?i)\b(bluray|brrip|bdrip)\b.*(?i)\b(complete|trilogy)\b: { from: title }
+      accept:
+        # Season packs
+        - (?i)\b(season|complete)\b: { from: title }
+
+  anime_base:
+    template: media_base
+    priority: 12
+    content_size:
+      max: 15000
+      min: 500
+    regexp:
+      reject:
+        # Rechazar peliculas
+        - (?i)\b(movie|pelicula|film|gekijouban|compilation)\b: { from: title }
+        # Rechazar doblajes
+        - (?i)\b(dubbed|dub|english\s+audio|spanish\s+audio)\b: { from: title }
+        - (?i)\b(latino|castellano|español)\b: { from: title }
+        # Sin subtitulos
+        - (?i)\b(raw|no\s+sub)\b: { from: title }
+      accept:
+        # Grupos de fansubs conocidos
+        - (?i)\[(SubsPlease|Erai-raws|ASW|EMBER|Judas)\]: { from: title }
+        # Batch packs
+        - (?i)\b(batch|complete|season)\b: { from: title }
+
+  reject_series:
+    regexp:
+      reject:
+        - (?i)s\d{1,2}e\d{1,2}: { from: title }
+        - (?i)season?\s?\d+: { from: title }
+        - (?i)complete: { from: title }
+
+  reject_audio_codecs:
+     regexp:
+      reject:
+        - (?i)\b(truehd|dts-hd)\b: { from: title }
 
 tasks:
   manual_animes:
     template:
-      - anime_template
+      - anime_base
       - transmission_client
     upgrade:
       tracking: yes
@@ -316,7 +290,7 @@ tasks:
 
   manual_tv:
     template:
-      - tv_template
+      - tv_base
       - transmission_client
     upgrade:
       tracking: yes
@@ -449,8 +423,9 @@ tasks:
 
   manual_movies:
     template:
-      - movies_template
-      - common_rejects
+      - movies_base
+      - reject_series
+      - reject_audio_codecs
       - transmission_client
     upgrade:
       tracking: yes
@@ -465,7 +440,6 @@ tasks:
             category: video
             sort_by: seeds
         - yts: yes
-        - 1337x: yes
       interval: 2 hours
     quality:
       - 1080p bluray
@@ -588,12 +562,9 @@ tasks:
 
   # Tareas de limpieza de Transmission
   clean_completed_torrents:
+    template: transmission_client
+    from_transmission: {}
     priority: 50
-    from_transmission:
-      host: "{{ env('TRANSMISSION_HOST') }}"
-      port: 9091
-      username: "{{ env('TRANSMISSION_USER') }}"
-      password: "{{ env('TRANSMISSION_PASS') }}"
     disable: [seen, seen_info_hash]
     if:
       - transmission_progress == 100: accept
@@ -601,60 +572,34 @@ tasks:
       - transmission_date_done and transmission_date_done < now - timedelta(days=3): accept
     delay: 2 hours
     transmission:
-      host: "{{ env('TRANSMISSION_HOST') }}"
-      port: 9091
-      username: "{{ env('TRANSMISSION_USER') }}"
-      password: "{{ env('TRANSMISSION_PASS') }}"
       action: purge
 
   clean_stalled_torrents:
+    template: transmission_client
+    from_transmission: {}
     priority: 50
-    from_transmission:
-      host: "{{ env('TRANSMISSION_HOST') }}"
-      port: 9091
-      username: "{{ env('TRANSMISSION_USER') }}"
-      password: "{{ env('TRANSMISSION_PASS') }}"
     disable: [seen, seen_info_hash]
     if:
       - transmission_peers == 0 and transmission_date_active < now - timedelta(hours=24): accept
       - transmission_rate_download == 0 and transmission_date_active < now - timedelta(hours=12): accept
     transmission:
-      host: "{{ env('TRANSMISSION_HOST') }}"
-      port: 9091
-      username: "{{ env('TRANSMISSION_USER') }}"
-      password: "{{ env('TRANSMISSION_PASS') }}"
       action: purge
 
   purge_all_torrents:
+    template: transmission_client
+    from_transmission: {}
     priority: 50
     manual: yes
-    from_transmission:
-      host: "{{ env('TRANSMISSION_HOST') }}"
-      port: 9091
-      username: "{{ env('TRANSMISSION_USER') }}"
-      password: "{{ env('TRANSMISSION_PASS') }}"
     disable: [seen, seen_info_hash]
     accept_all: yes
     transmission:
-      host: "{{ env('TRANSMISSION_HOST') }}"
-      port: 9091
-      username: "{{ env('TRANSMISSION_USER') }}"
-      password: "{{ env('TRANSMISSION_PASS') }}"
       action: purge
 
   remove_torrents_keep_files:
+    template: transmission_client
+    from_transmission: {}
     priority: 50
-    manual: yes
-    from_transmission:
-      host: "{{ env('TRANSMISSION_HOST') }}"
-      port: 9091
-      username: "{{ env('TRANSMISSION_USER') }}"
-      password: "{{ env('TRANSMISSION_PASS') }}"
     disable: [seen, seen_info_hash]
     accept_all: yes
     transmission:
-      host: "{{ env('TRANSMISSION_HOST') }}"
-      port: 9091
-      username: "{{ env('TRANSMISSION_USER') }}"
-      password: "{{ env('TRANSMISSION_PASS') }}"
       action: remove

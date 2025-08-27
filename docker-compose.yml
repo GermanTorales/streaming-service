@@ -45,16 +45,16 @@ services:
       - TRANSMISSION_RPC_BIND_ADDRESS=0.0.0.0
       - TRANSMISSION_RPC_PORT=${TRANSMISSION_PORT}
       - TRANSMISSION_RPC_WHITELIST_ENABLED=false
-      - TRANSMISSION_DOWNLOAD_DIR=${DOWNLOADS_PATH}/complete
+      - TRANSMISSION_DOWNLOAD_DIR=/downloads/complete
       - TRANSMISSION_INCOMPLETE_DIR_ENABLED=true
-      - TRANSMISSION_INCOMPLETE_DIR=${DOWNLOADS_PATH}/incomplete
+      - TRANSMISSION_INCOMPLETE_DIR=/downloads/incomplete
       - TRANSMISSION_WATCH_DIR_ENABLED=true
       - TRANSMISSION_WATCH_DIR=/watch
       - TZ=${TZ}
     volumes:
       - ./transmission/config:/config
-      - ${MEDIA_PATH}${DOWNLOADS_PATH}:${DOWNLOADS_PATH}
-      - ${MEDIA_PATH}${DOWNLOADS_PATH}/watch:/watch
+      - ${MEDIA_PATH}/downloads:/downloads
+      - ${MEDIA_PATH}/downloads/watch:/watch
     restart: unless-stopped
 
   flexget:
