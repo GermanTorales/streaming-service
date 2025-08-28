@@ -280,7 +280,7 @@ tasks:
       providers:
         - opensubtitles
         - podnapisi
-        - argenteam
+        - subtitulamos
       single: no
       exact_match: no
       hearing_impaired: no
@@ -477,8 +477,8 @@ tasks:
         - opensubtitles
         - podnapisi
         - tvsubtitles
-        - thesubdb
-        - argenteam
+        - addic7ed
+        - subtitulamos
       single: no
       exact_match: no
       hearing_impaired: no
