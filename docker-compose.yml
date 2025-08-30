@@ -102,6 +102,3 @@ services:
       - ${MEDIA_PATH}/animes:/animes:ro
     restart: unless-stopped
 
-networks:
-  default:
-    name: media-automation

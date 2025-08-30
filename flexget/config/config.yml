@@ -7,9 +7,6 @@ schedules:
   - tasks: ['organize_movies', 'organize_tv', 'organize_anime']
     interval:
       hours: 2
-  - tasks: ['download_subtitles', 'download_anime_subtitles']
-    interval:
-      hours: 2
   - tasks: ['clean_completed_torrents', 'clean_stalled_torrents']
     interval:
       hours: 6
@@ -64,6 +61,10 @@ templates:
     content_size:
       max: 20000
       min: 1500
+    regexp:
+      reject:
+        # Rechazar colecciones y packs
+        - (?i)\b(collection|trilogy|pack|complete|boxset|box.set)\b: { from: title }
 
   tv_base:
     template: media_base
@@ -71,14 +72,14 @@ templates:
     priority: 15
     content_size:
       max: 50000
-      min: 500
+      min: 5000
     regexp:
       reject:
         # Rechazar peliculas
         - (?i)\b(bluray|brrip|bdrip)\b.*(?i)\b(complete|trilogy)\b: { from: title }
       accept:
         # Season packs
-        - (?i)\b(season|complete)\b: { from: title }
+        - (?i)\b(season|complete|s\d{1,2})\b: { from: title }
 
   anime_base:
     template: media_base
@@ -166,14 +167,14 @@ tasks:
           timeframe: 3 days
           propers: no
           season_packs: yes
-      anime:
-        - "Jujutsu Kaisen":
-            alternate_name:
-              - "Jujutsu Kaisen S1"
-              - "Jujutsu Kaisen 1st Season"
-            begin: 1
-            quality: 720p-1080p
-            identified_by: sequence
+  #      anime:
+        #  - "Jujutsu Kaisen":
+        #    alternate_name:
+        #      - "Jujutsu Kaisen S1"
+        #      - "Jujutsu Kaisen 1st Season"
+        #    begin: 1
+        #    quality: 720p-1080p
+        #    identified_by: sequence
     exists_series:
       path:
         - "/animes"
@@ -205,110 +206,33 @@ tasks:
       auto_escape: yes
       on_output:
         for_entries: |
-          set -euo pipefail
-          SRC="{{ location }}"
-          DST_DIR="{{ anime_dir }}"
-          DST_FILE="{{ anime_dst }}"
-          
-          mkdir -p "$DST_DIR"
-          
-          echo "[INFO] Procesando anime: $(basename "$SRC")"
-          
-          if ! command -v ffprobe > /dev/null 2>&1; then
-            echo "[ERROR] ffprobe no encontrado. Moviendo sin verificación"
-            mv -n "$SRC" "$DST_DIR/$DST_FILE"
-            exit 0
-          fi
-          
-          vcodec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name \
-            -of default=noprint_wrappers=1:nokey=1 "$SRC" 2>/dev/null || echo "unknown")
-          acodec=$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name \
-            -of default=noprint_wrappers=1:nokey=1 "$SRC" 2>/dev/null || echo "unknown")
-          
-          vcodec=$(echo "$vcodec" | tr '[:upper:]' '[:lower:]' | xargs)
-          acodec=$(echo "$acodec" | tr '[:upper:]' '[:lower:]' | xargs)
-          
-          echo "[INFO] Video: $vcodec, Audio: $acodec"
-          
-          if [[ "$vcodec" != "h264" && "$vcodec" != "h265" && "$vcodec" != "av1" && "$vcodec" != "unknown" ]]; then
-            echo "[WARN] Codec de video no soportado: $vcodec. Moviendo sin cambios."
-            mv -n "$SRC" "$DST_DIR/$DST_FILE"
-            exit 0
-          fi
-          
-          if [[ "$acodec" != "aac" && "$acodec" != "ac3" && "$acodec" != "flac" && "$acodec" != "opus" && "$acodec" != "unknown" ]]; then
-            if command -v ffmpeg >/dev/null 2>&1; then
-              echo "[INFO] Transcodificando audio $acodec -> AAC"
-              TMP="$DST_DIR/.tmp.$(basename "$DST_FILE")"
-              
-              if ffmpeg -hide_banner -loglevel error -hwaccel auto -y -i "$SRC" \
-                -map 0 -c:v copy -c:s copy -c:a aac -b:a 192k "$TMP"; then
-                echo "[INFO] Transcodificación exitosa"
-                mv "$TMP" "$DST_DIR/$DST_FILE"
-                rm -f "$SRC"
-              else
-                echo "[ERROR] Error en transcodificación. Moviendo original."
-                rm -f "$TMP" 2>/dev/null || true
-                mv -n "$SRC" "$DST_DIR/$DST_FILE"
-              fi
-            else
-              echo "[WARN] ffmpeg no disponible. Moviendo sin cambios."
-              mv -n "$SRC" "$DST_DIR/$DST_FILE"
-            fi
-          else
-            echo "[INFO] Codecs compatibles. Moviendo sin cambios."
-            mv -n "$SRC" "$DST_DIR/$DST_FILE"
-          fi
-          
-          echo "[INFO] Completado: $DST_FILE"
-
-  download_anime_subtitles:
-    priority: 51
-    no_entries_ok: yes
-    filesystem:
-      path:
-        - "/animes"
-      regexp: '.*\.(avi|mkv|mp4)$'
-      recursive: yes
-    accept_all: yes
-    seen: local
-    subliminal:
-      languages:
-        - es
-      alternatives:
-        - en
-      providers:
-        - opensubtitles
-        - podnapisi
-        - subtitulamos
-      single: no
-      exact_match: no
-      hearing_impaired: no
-    check_subtitles: yes
-    if:
-      - "not (subtitles and ('es' in subtitles or 'en' in subtitles))": accept
+          /config/process_media.sh "{{ location }}" "{{ anime_dir }}" "{{ anime_dst }}" "anime"
 
   manual_tv:
     template:
       - tv_base
       - transmission_client
+    
     upgrade:
       tracking: yes
       target: 1080p
-      timeframe: 7 days
+      timeframe: 14 days
       propers: yes
+    
     discover:
       what:
-        - next_series_episodes:
+        - next_series_seasons:
             from_start: yes
             backfill: yes
       from:
         - piratebay:
             category: tv
             sort_by: seeds
+        - torrentz: good
         - limetorrents:
             category: tv
-      interval: 3 hours
+      interval: 12 hours
+    
     quality:
       - 1080p webdl
       - 1080p webrip
@@ -319,28 +243,30 @@ tasks:
       - 720p bluray
       - 720p hdtv
       - 720p
+    
     series:
-      - "Breaking Bad":
+      - "Dopesick":
           identified_by: ep
+          exact: yes
           upgrade: yes
           target: 1080p
-          timeframe: 3 days
+          timeframe: 14 days
           propers: yes
           season_packs: yes
-          quality: 720p-1080p
-      - "The Big Bang Theory":
-          identified_by: ep
-          upgrade: yes
-          target: 1080p
-          timeframe: 3 days
-          propers: yes
-          season_packs: yes
-          quality: 720p-1080p
+          quality: 1080p
+    
     exists_series:
       - "/series"
+    
     transmission:
       path: "/downloads/tv/complete"
       ratio: 2.0
+    
+    sort_by:
+      field: quality
+      reverse: yes
+
+    limit_new: 1
 
   organize_tv:
     priority: 3
@@ -364,62 +290,7 @@ tasks:
       auto_escape: yes
       on_output:
         for_entries: |
-          set -euo pipefail
-          SRC="{{ location }}"
-          DST_DIR="{{ series_dir }}"
-          DST_FILE="{{ series_dst }}"
-          
-          mkdir -p "$DST_DIR"
-          
-          echo "[INFO] Procesando serie: $(basename "$SRC")"
-          
-          if ! command -v ffprobe > /dev/null 2>&1; then
-            echo "[ERROR] ffprobe no encontrado. Moviendo sin verificación"
-            mv -n "$SRC" "$DST_DIR/$DST_FILE"
-            exit 0
-          fi
-          
-          vcodec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name \
-            -of default=noprint_wrappers=1:nokey=1 "$SRC" 2>/dev/null || echo "unknown")
-          acodec=$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name \
-            -of default=noprint_wrappers=1:nokey=1 "$SRC" 2>/dev/null || echo "unknown")
-          
-          vcodec=$(echo "$vcodec" | tr '[:upper:]' '[:lower:]' | xargs)
-          acodec=$(echo "$acodec" | tr '[:upper:]' '[:lower:]' | xargs)
-          
-          echo "[INFO] Video: $vcodec, Audio: $acodec"
-          
-          if [[ "$vcodec" != "h264" && "$vcodec" != "h265" && "$vcodec" != "av1" && "$vcodec" != "unknown" ]]; then
-            echo "[WARN] Codec de video no soportado: $vcodec. Moviendo sin cambios."
-            mv -n "$SRC" "$DST_DIR/$DST_FILE"
-            exit 0
-          fi
-          
-          if [[ "$acodec" != "aac" && "$acodec" != "ac3" && "$acodec" != "unknown" ]]; then
-            if command -v ffmpeg >/dev/null 2>&1; then
-              echo "[INFO] Transcodificando audio $acodec -> AAC"
-              TMP="$DST_DIR/.tmp.$(basename "$DST_FILE")"
-              
-              if ffmpeg -hide_banner -loglevel error -hwaccel auto -y -i "$SRC" \
-                -map 0 -c:v copy -c:s copy -c:a aac -b:a 192k -ac 2 "$TMP"; then
-                echo "[INFO] Transcodificación exitosa"
-                mv "$TMP" "$DST_DIR/$DST_FILE"
-                rm -f "$SRC"
-              else
-                echo "[ERROR] Error en transcodificación. Moviendo original."
-                rm -f "$TMP" 2>/dev/null || true
-                mv -n "$SRC" "$DST_DIR/$DST_FILE"
-              fi
-            else
-              echo "[WARN] ffmpeg no disponible. Moviendo sin cambios."
-              mv -n "$SRC" "$DST_DIR/$DST_FILE"
-            fi
-          else
-            echo "[INFO] Codecs compatibles. Moviendo sin cambios."
-            mv -n "$SRC" "$DST_DIR/$DST_FILE"
-          fi
-          
-          echo "[INFO] Completado: $DST_FILE"
+          /config/process_media.sh "{{ location }}" "{{ series_dir }}" "{{ series_dst }}" "tv"
 
   manual_movies:
     template:
@@ -437,10 +308,11 @@ tasks:
         - movie_list: manual_movies
       from:
         - piratebay:
-            category: video
+            category: movies
             sort_by: seeds
         - yts: yes
       interval: 2 hours
+      release_estimations: ignore
     quality:
       - 1080p bluray
       - 1080p webdl
@@ -456,35 +328,6 @@ tasks:
     transmission:
       path: "/downloads/movies/complete"
       ratio: 2.0
-
-  download_subtitles:
-    priority: 50
-    no_entries_ok: yes
-    filesystem:
-      path:
-        - "/movies"
-        - "/series"
-      regexp: '.*\.(avi|mkv|mp4)$'
-      recursive: yes
-    accept_all: yes
-    seen: local
-    subliminal:
-      languages:
-        - es
-      alternatives:
-        - en
-      providers:
-        - opensubtitles
-        - podnapisi
-        - tvsubtitles
-        - addic7ed
-        - subtitulamos
-      single: no
-      exact_match: no
-      hearing_impaired: no
-    check_subtitles: yes
-    if:
-      - "not (subtitles and ('es' in subtitles or 'en' in subtitles))": accept
 
   organize_movies:
     priority: 2
@@ -503,62 +346,7 @@ tasks:
       auto_escape: yes
       on_output:
         for_entries: |
-          set -euo pipefail
-          SRC="{{ location }}"
-          DST_DIR="{{ movie_dir }}"
-          DST_FILE="{{ movie_dst }}"
-          
-          mkdir -p "$DST_DIR"
-          
-          echo "[INFO] Procesando: $(basename "$SRC")"
-          
-          if ! command -v ffprobe > /dev/null 2>&1; then
-            echo "[ERROR] ffprobe no encontrado. Moviendo sin verificación"
-            mv -n "$SRC" "$DST_DIR/$DST_FILE"
-            exit 0
-          fi
-          
-          vcodec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name \
-            -of default=noprint_wrappers=1:nokey=1 "$SRC" 2>/dev/null || echo "unknown")
-          acodec=$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name \
-            -of default=noprint_wrappers=1:nokey=1 "$SRC" 2>/dev/null || echo "unknown")
-          
-          vcodec=$(echo "$vcodec" | tr '[:upper:]' '[:lower:]' | xargs)
-          acodec=$(echo "$acodec" | tr '[:upper:]' '[:lower:]' | xargs)
-          
-          echo "[INFO] Video: $vcodec, Audio: $acodec"
-          
-          if [[ "$vcodec" != "h264" && "$vcodec" != "h265" && "$vcodec" != "av1" && "$vcodec" != "unknown" ]]; then
-            echo "[WARN] Codec de video no soportado: $vcodec. Moviendo sin cambios."
-            mv -n "$SRC" "$DST_DIR/$DST_FILE"
-            exit 0
-          fi
-          
-          if [[ "$acodec" != "aac" && "$acodec" != "ac3" && "$acodec" != "unknown" ]]; then
-            if command -v ffmpeg >/dev/null 2>&1; then
-              echo "[INFO] Transcodificando audio $acodec -> AAC"
-              TMP="$DST_DIR/.tmp.$(basename "$DST_FILE")"
-              
-              if ffmpeg -hide_banner -loglevel error -hwaccel auto -y -i "$SRC" \
-                -map 0 -c:v copy -c:s copy -c:a aac -b:a 256k -ac 2 "$TMP"; then
-                echo "[INFO] Transcodificación exitosa"
-                mv "$TMP" "$DST_DIR/$DST_FILE"
-                rm -f "$SRC"
-              else
-                echo "[ERROR] Error en transcodificación. Moviendo original."
-                rm -f "$TMP" 2>/dev/null || true
-                mv -n "$SRC" "$DST_DIR/$DST_FILE"
-              fi
-            else
-              echo "[WARN] ffmpeg no disponible. Moviendo sin cambios."
-              mv -n "$SRC" "$DST_DIR/$DST_FILE"
-            fi
-          else
-            echo "[INFO] Codecs compatibles. Moviendo sin cambios."
-            mv -n "$SRC" "$DST_DIR/$DST_FILE"
-          fi
-          
-          echo "[INFO] Completado: $DST_FILE"
+          /config/process_media.sh "{{ location }}" "{{ movie_dir }}" "{{ movie_dst }}" "movies"
 
   # Tareas de limpieza de Transmission
   clean_completed_torrents:
