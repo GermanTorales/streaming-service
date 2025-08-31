@@ -1,0 +1,20 @@
+regexp:
+  reject:
+    # Reject bad video qualities
+    - (?i)\b(HDCAM|CAM|TS|TELESYNC|HDTS|SCREENER|WORKPRINT)\b: { from: title }
+      # Reject audio 12bit
+    - (?i)\b(12bit|hi12|hi12p)\b: { from: title }
+
+torrent_alive: 5
+magnets: yes
+
+content_filter:
+  strict: no
+  require:
+    - '*.mkv'
+    - '*.mp4'
+    - '*.avi'
+  reject:
+    - 'password'
+    - '*.rar'
+    - '*.zip'

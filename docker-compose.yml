@@ -7,9 +7,11 @@ services:
     devices:
       - /dev/net/tun:/dev/net/tun
     environment:
-      - VPN_SERVICE_PROVIDER=custom
-      - VPN_TYPE=openvpn
-      - OPENVPN_CUSTOM_CONFIG=/gluetun/vpn.ovpn
+      - VPN_SERVICE_PROVIDER=airvpn
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
+      - WIREGUARD_ADDRESS=${WIREGUARD_ADDRESS}
       - DOT=off
       - FIREWALL_VPN_INPUT_PORTS=51413
       - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/16,10.0.0.0/8

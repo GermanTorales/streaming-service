@@ -1,0 +1,11 @@
+template: transmission_client
+from_transmission: {}
+priority: 50
+disable: [seen, seen_info_hash]
+if:
+  - transmission_progress == 100: accept
+  - transmission_seed_ratio_ok: accept
+  - transmission_date_done and transmission_date_done < now - timedelta(days=3): accept
+delay: 2 hours
+transmission:
+  action: purge

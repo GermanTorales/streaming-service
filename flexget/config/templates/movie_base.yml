@@ -1,0 +1,10 @@
+template: media_base
+imdb_lookup: yes
+tmdb_lookup: yes
+priority: 10
+content_size:
+  max: 20000
+  min: 1500
+reject:
+  # Reject collections and packs
+  - (?i)\b(collection|trilogy|pack|complete|boxset|box.set)\b: { from: title }

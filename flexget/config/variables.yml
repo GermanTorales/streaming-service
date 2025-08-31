@@ -1,0 +1,11 @@
+storage:
+  movies: /movies
+  tv: /series
+  animes: /animes
+  downloads: /downloads
+
+transmission:
+  host: "{{ env('TRANSMISSION_HOST') }}"
+  port: 9091
+  username: "{{ env('TRANSMISSION_USER') }}"
+  password: "{{ env('TRANSMISSION_PASS') }}"

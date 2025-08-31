@@ -1,0 +1,46 @@
+template:
+  - movie_base
+  - reject_series
+  - reject_audio_codecs
+  - transmission_client
+
+upgrade:
+  tracking: yes
+  target: 1080p bluray
+  timeframe: 3 days
+  propers: yes
+
+discover:
+  what:
+    - movie_list: manual_movies
+  from:
+    - piratebay:
+        category: movies
+        sort_by: seeds
+    - yts: yes
+    - torrentz: good
+    - limetorrents:
+        category: movies
+  interval: 2 hours
+  release_estimations: ignore
+
+quality:
+  - 1080p bluray
+  - 1080p webdl
+  - 1080p webrip
+  - 2160p bluray
+  - 2160p webdl
+
+list_match:
+  from:
+    - movie_list: manual_movies
+
+exists_movie:
+  - "/movies"
+
+limit_new: 1
+
+transmission:
+  path: "/downloads/movies/complete"
+  ratio: 2.0
+

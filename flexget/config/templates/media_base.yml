@@ -1,0 +1,10 @@
+seen: local
+no_entries_ok: yes
+regexp:
+  reject:
+    # Reject languages not desired
+    - (?i)\b(korean|chinese|japanese|german|french|italian|russian)\s+(audio|dub)\b: { from: title }
+      # Reject hardcoded subs
+    - (?i)\bhc\s+(kor|chi|jap|ger|fre|ita|rus): { from: title }
+  accept:
+    - (?i)\b(eng|english|spa|spanish|multi)\s+(sub|subtitle): { from: title }

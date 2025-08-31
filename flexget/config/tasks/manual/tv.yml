@@ -1,0 +1,58 @@
+template:
+  - tv_base
+  - transmission_client
+
+upgrade:
+  tracking: yes
+  target: 1080p
+  timeframe: 14 days
+  propers: yes
+
+discover:
+  what:
+    - next_series_seasons:
+      from_start: yes
+      backfill: yes
+  from:
+    - piratebay:
+      category: tv
+      sort_by: seeds
+    - torrentz: good
+    - limetorrents:
+      category: tv
+  interval: 12 hours
+
+quality:
+  - 1080p webdl
+  - 1080p webrip
+  - 1080p bluray
+  - 1080p
+  - 720p webdl
+  - 720p webrip
+  - 720p bluray
+  - 720p hdtv
+  - 720p
+
+series:
+  - "Dopesick":
+    identified_by: ep
+    exact: yes
+    upgrade: yes
+    target: 1080p
+    timeframe: 14 days
+    propers: yes
+    season_packs: yes
+    quality: 1080p
+
+exists_series:
+  - '/series'
+
+transmission:
+  path: '/downloads/series/complete'
+  ratio: 2.0
+
+sort_by:
+  field: quality
+  reverse: yes
+
+limit_new: 1

@@ -1,0 +1,3 @@
+regexp:
+  reject:
+    - (?i)\b(truehd|dts-hd)\b: { from: title }

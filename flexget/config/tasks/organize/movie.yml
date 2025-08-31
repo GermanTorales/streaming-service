@@ -1,0 +1,21 @@
+priority: 2
+
+filesystem:
+  path: "/downloads/movies/complete"
+  regexp: '.*\.(avi|mkv|mp4)$'
+  recursive: yes
+
+accept_all: yes
+seen: local
+tmdb_lookup: yes
+require_field: [ movie_name, imdb_id, tmdb_year ]
+
+set:
+  movie_dir: "/movies/{{ movie_name }} ({{ movie_year }}) {{ imdb_id }}"
+  movie_dst: "{{ movie_name }} ({{ movie_year }}){{ location | pathext }}"
+
+exec:
+  auto_escape: yes
+  on_output:
+    for_entries: |
+      /config/scripts/process_media.sh "{{ location }}" "{{ movie_dir }}" "{{ movie_dst }}" "movies"

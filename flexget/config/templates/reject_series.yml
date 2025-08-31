@@ -1,0 +1,4 @@
+regexp:
+  reject:
+    - (?i)s\d{1,2}e\d{1,2}: { from: title }
+    - (?i)season?\s?\d+: { from: title }

@@ -1,0 +1,9 @@
+template: transmission_client
+from_transmission: {}
+priority: 50
+disable: [seen, seen_info_hash]
+if:
+  - transmission_peers == 0 and transmission_date_active < now - timedelta(hours=24): accept
+  - transmission_rate_download == 0 and transmission_date_active < now - timedelta(hours=12): accept
+transmission:
+  action: purge

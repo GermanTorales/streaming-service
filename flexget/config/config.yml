@@ -1,393 +1,68 @@
-web_server: yes
+variables: variables.yml
+
+templates:
+  global:
+    include: templates/global.yml
+
+  transmission_client:
+    include: templates/clients.yml
+
+  media_base:
+    include: templates/media_base.yml
+
+  movie_base:
+    include: templates/movie_base.yml
+
+  tv_base:
+    include: templates/tv_base.yml
+
+  anime_base:
+    include: templates/anime_base.yml
+
+  reject_series:
+    include: templates/reject_series.yml
+
+  reject_audio_codecs:
+    include: templates/reject_audio_codecs.yml
+
+tasks:
+  manual_movies:
+    include: tasks/manual/movies.yml
+
+  manual_tv:
+    include: tasks/manual/tv.yml
+
+  manual_animes:
+    include: tasks/manual/anime.yml
+
+  organize_movies:
+    include: tasks/organize/movie.yml
+
+  #organize_tv:
+    #include: tasks/organize/tv.yml
+
+  organize_anime:
+    include: tasks/organize/anime.yml
+
+  clean_completed_torrents:
+    include: tasks/clean/completed_torrents.yml
+
+  clean_stalled_torrents:
+    include: tasks/maintenance/clean_stalled_torrents.yml
+
+  purge_all_torrents:
+    include: tasks/maintenance/purge_all_torrents.yml
+
+  remove_torrents_keep_files:
+    include: tasks/maintenance/remove_torrents_keep_files.yml
 
 schedules:
-  - tasks: ['manual_movies', 'manual_tv', 'manual_animes']
+  - tasks: ['manual_movies']
     interval:
       hours: 2
-  - tasks: ['organize_movies', 'organize_tv', 'organize_anime']
+  - tasks: ['organize_movies']
     interval:
       hours: 2
   - tasks: ['clean_completed_torrents', 'clean_stalled_torrents']
     interval:
       hours: 6
-
-templates:
-  global:
-    regexp:
-      reject:
-        # Rechazar calidades muy malas
-        - (?i)\b(HDCAM|CAM|TS|TELESYNC|HDTS|SCREENER|WORKPRINT)\b: { from: title }
-        # Rechazar audio 12bit
-        - (?i)\b(12bit|hi12|hi12p)\b: { from: title }
-
-    torrent_alive: 5
-    magnets: yes
-
-    content_filter:
-      strict: no
-      require:
-        - '*.mkv'
-        - '*.mp4'
-        - '*.avi'
-      reject:
-        - 'password'
-        - '*.rar'
-        - '*.zip'
-
-  transmission_client:
-    transmission:
-      host: localhost
-      port: 9091
-      username: "{{ env('TRANSMISSION_USER') }}"
-      password: "{{ env('TRANSMISSION_PASS') }}"
-
-  media_base:
-    seen: local
-    no_entries_ok: yes
-    regexp:
-      reject:
-        # Rechazar idiomas no deseados
-        - (?i)\b(korean|chinese|japanese|german|french|italian|russian)\s+(audio|dub)\b: { from: title }
-        # Rechazar hardcoded subs
-        - (?i)\bhc\s+(kor|chi|jap|ger|fre|ita|rus): { from: title }
-      accept:
-        - (?i)\b(eng|english|spa|spanish|multi)\s+(sub|subtitle): { from: title }
-  
-  movies_base:
-    template: media_base
-    imdb_lookup: yes
-    tmdb_lookup: yes
-    priority: 10
-    content_size:
-      max: 20000
-      min: 1500
-    regexp:
-      reject:
-        # Rechazar colecciones y packs
-        - (?i)\b(collection|trilogy|pack|complete|boxset|box.set)\b: { from: title }
-
-  tv_base:
-    template: media_base
-    tmdb_lookup: yes
-    priority: 15
-    content_size:
-      max: 50000
-      min: 5000
-    regexp:
-      reject:
-        # Rechazar peliculas
-        - (?i)\b(bluray|brrip|bdrip)\b.*(?i)\b(complete|trilogy)\b: { from: title }
-      accept:
-        # Season packs
-        - (?i)\b(season|complete|s\d{1,2})\b: { from: title }
-
-  anime_base:
-    template: media_base
-    priority: 12
-    content_size:
-      max: 15000
-      min: 500
-    regexp:
-      reject:
-        # Rechazar peliculas
-        - (?i)\b(movie|pelicula|film|gekijouban|compilation)\b: { from: title }
-        # Rechazar doblajes
-        - (?i)\b(dubbed|dub|english\s+audio|spanish\s+audio)\b: { from: title }
-        - (?i)\b(latino|castellano|español)\b: { from: title }
-        # Sin subtitulos
-        - (?i)\b(raw|no\s+sub)\b: { from: title }
-      accept:
-        # Grupos de fansubs conocidos
-        - (?i)\[(SubsPlease|Erai-raws|ASW|EMBER|Judas)\]: { from: title }
-        # Batch packs
-        - (?i)\b(batch|complete|season)\b: { from: title }
-
-  reject_series:
-    regexp:
-      reject:
-        - (?i)s\d{1,2}e\d{1,2}: { from: title }
-        - (?i)season?\s?\d+: { from: title }
-        - (?i)complete: { from: title }
-
-  reject_audio_codecs:
-     regexp:
-      reject:
-        - (?i)\b(truehd|dts-hd)\b: { from: title }
-
-tasks:
-  manual_animes:
-    template:
-      - anime_base
-      - transmission_client
-    upgrade:
-      tracking: yes
-      target: 1080p
-      timeframe: 7 days
-      propers: yes
-    discover:
-      release_estimations: loose
-      what:
-        - next_series_episodes:
-            from_start: yes
-            backfill: yes
-      from:
-        - nyaa:
-            category: anime eng
-            filter: trusted only
-      interval: 2 hours
-    manipulate:
-      - title:
-          replace:
-            regexp: '\[.*?\]'
-            format: ''
-      - title:
-          replace:
-            regexp: '\s+'
-            format: ' '
-      - title:
-          replace:
-            regexp: '\s*-\s*(\d+)'
-            format: ' \1'
-      - title:
-          replace:
-            regexp: '\s+\.(mkv|mp4|avi)$'
-            format: '.\1'
-    quality:
-      - 1080p
-      - 720p
-    series:
-      settings:
-        anime:
-          identified_by: sequence
-          from_group:
-            - SubsPlease
-            - Erai-raws
-          upgrade: no
-          target: 1080p
-          timeframe: 3 days
-          propers: no
-          season_packs: yes
-  #      anime:
-        #  - "Jujutsu Kaisen":
-        #    alternate_name:
-        #      - "Jujutsu Kaisen S1"
-        #      - "Jujutsu Kaisen 1st Season"
-        #    begin: 1
-        #    quality: 720p-1080p
-        #    identified_by: sequence
-    exists_series:
-      path:
-        - "/animes"
-      allow_different_qualities: no
-    limit_new: 5
-    transmission:
-      path: "/downloads/animes/complete"
-      ratio: 2.0
-
-  organize_anime:
-    priority: 4
-    filesystem:
-      path: "/downloads/animes/complete"
-      regexp: '.*\.(avi|mkv|mp4)$'
-      recursive: yes
-    accept_all: yes
-    seen: local
-    metainfo_series: yes
-    series:
-      settings:
-        default:
-          parse_only: yes
-          identified_by: sequence
-    require_field: [series_name, series_id]
-    set:
-      anime_dir: "/animes/{{ series_name }}{% if series_year is defined and series_year %} ({{ series_year }}){% endif %}"
-      anime_dst: "{{ series_name }} - {{ '%02d'|format(series_id|int) }}{% if series_ep_name is defined and series_ep_name %} - {{ series_ep_name }}{% endif %}{% if quality is defined and quality %} [{{ quality }}]{% endif %}{{ location | pathext }}"
-    exec:
-      auto_escape: yes
-      on_output:
-        for_entries: |
-          /config/process_media.sh "{{ location }}" "{{ anime_dir }}" "{{ anime_dst }}" "anime"
-
-  manual_tv:
-    template:
-      - tv_base
-      - transmission_client
-    
-    upgrade:
-      tracking: yes
-      target: 1080p
-      timeframe: 14 days
-      propers: yes
-    
-    discover:
-      what:
-        - next_series_seasons:
-            from_start: yes
-            backfill: yes
-      from:
-        - piratebay:
-            category: tv
-            sort_by: seeds
-        - torrentz: good
-        - limetorrents:
-            category: tv
-      interval: 12 hours
-    
-    quality:
-      - 1080p webdl
-      - 1080p webrip
-      - 1080p bluray
-      - 1080p
-      - 720p webdl
-      - 720p webrip
-      - 720p bluray
-      - 720p hdtv
-      - 720p
-    
-    series:
-      - "Dopesick":
-          identified_by: ep
-          exact: yes
-          upgrade: yes
-          target: 1080p
-          timeframe: 14 days
-          propers: yes
-          season_packs: yes
-          quality: 1080p
-    
-    exists_series:
-      - "/series"
-    
-    transmission:
-      path: "/downloads/tv/complete"
-      ratio: 2.0
-    
-    sort_by:
-      field: quality
-      reverse: yes
-
-    limit_new: 1
-
-  organize_tv:
-    priority: 3
-    filesystem:
-      path: "/downloads/tv/complete"
-      regexp: '.*\.(avi|mkv|mp4)$'
-      recursive: yes
-    accept_all: yes
-    seen: local
-    thetvdb_lookup: yes
-    tmdb_lookup: yes
-    series:
-      settings:
-        default:
-          parse_only: yes
-    require_field: [series_name, series_season, series_episode]
-    set:
-      series_dir: "/series/{{ series_name }}{% if series_year %} ({{ series_year }}){% endif %}{% if tvdb_id %} {{{{ tvdb_id }}}}{% endif %}/Season {{ '%02d'|format(series_season) }}"
-      series_dst: "{{ series_name }} - S{{ '%02d'|format(series_season) }}E{{ '%02d'|format(series_episode) }}{% if series_ep_name %} - {{ series_ep_name }}{% endif %}{% if quality %} {{ quality }}{% endif %}{{ location | pathext }}"
-    exec:
-      auto_escape: yes
-      on_output:
-        for_entries: |
-          /config/process_media.sh "{{ location }}" "{{ series_dir }}" "{{ series_dst }}" "tv"
-
-  manual_movies:
-    template:
-      - movies_base
-      - reject_series
-      - reject_audio_codecs
-      - transmission_client
-    upgrade:
-      tracking: yes
-      target: 1080p bluray
-      timeframe: 3 days
-      propers: yes
-    discover:
-      what:
-        - movie_list: manual_movies
-      from:
-        - piratebay:
-            category: movies
-            sort_by: seeds
-        - yts: yes
-      interval: 2 hours
-      release_estimations: ignore
-    quality:
-      - 1080p bluray
-      - 1080p webdl
-      - 1080p webrip
-      - 2160p bluray
-      - 2160p webdl
-    list_match:
-      from:
-        - movie_list: manual_movies
-    exists_movie:
-      - "/movies"
-    limit_new: 1
-    transmission:
-      path: "/downloads/movies/complete"
-      ratio: 2.0
-
-  organize_movies:
-    priority: 2
-    filesystem:
-      path: "/downloads/movies/complete"
-      regexp: '.*\.(avi|mkv|mp4)$'
-      recursive: yes
-    accept_all: yes
-    seen: local
-    tmdb_lookup: yes
-    require_field: movie_name
-    set:
-      movie_dir: "/movies/{{ movie_name }} ({{ movie_year }})"
-      movie_dst: "{{ movie_name }} ({{ movie_year }}){{ location | pathext }}"
-    exec:
-      auto_escape: yes
-      on_output:
-        for_entries: |
-          /config/process_media.sh "{{ location }}" "{{ movie_dir }}" "{{ movie_dst }}" "movies"
-
-  # Tareas de limpieza de Transmission
-  clean_completed_torrents:
-    template: transmission_client
-    from_transmission: {}
-    priority: 50
-    disable: [seen, seen_info_hash]
-    if:
-      - transmission_progress == 100: accept
-      - transmission_seed_ratio_ok: accept
-      - transmission_date_done and transmission_date_done < now - timedelta(days=3): accept
-    delay: 2 hours
-    transmission:
-      action: purge
-
-  clean_stalled_torrents:
-    template: transmission_client
-    from_transmission: {}
-    priority: 50
-    disable: [seen, seen_info_hash]
-    if:
-      - transmission_peers == 0 and transmission_date_active < now - timedelta(hours=24): accept
-      - transmission_rate_download == 0 and transmission_date_active < now - timedelta(hours=12): accept
-    transmission:
-      action: purge
-
-  purge_all_torrents:
-    template: transmission_client
-    from_transmission: {}
-    priority: 50
-    manual: yes
-    disable: [seen, seen_info_hash]
-    accept_all: yes
-    transmission:
-      action: purge
-
-  remove_torrents_keep_files:
-    template: transmission_client
-    from_transmission: {}
-    priority: 50
-    disable: [seen, seen_info_hash]
-    accept_all: yes
-    transmission:
-      action: remove

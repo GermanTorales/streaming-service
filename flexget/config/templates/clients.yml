@@ -1,0 +1,5 @@
+transmission:
+  host: '{? transmission.host ?}'
+  port: '{? transmission.port ?}'
+  username: '{? transmission.username ?}'
+  password: '{? transmission.password ?}'

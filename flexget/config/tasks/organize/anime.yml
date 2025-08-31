@@ -1,0 +1,28 @@
+priority: 4
+
+filesystem:
+  path: '/downloads/animes/complete'
+  regexp: '.*\.(avi|mkv|mp4)$'
+  recursive: yes
+
+accept_all: yes
+seen: local
+metainfo_series: yes
+
+series:
+  settings:
+    default:
+      parse_only: yes
+      identified_by: sequence
+
+require_field: [series_name, series_id]
+
+set:
+  anime_dir: "/animes/{{ series_name }}{% if series_year is defined and series_year %} ({{ series_year }}){% endif %}"
+  anime_dst: "{{ series_name }} - {{ '%02d'|format(series_id|int) }}{% if series_ep_name is defined and series_ep_name %} - {{ series_ep_name }}{% endif %}{% if quality is defined and quality %} [{{ quality }}]{% endif %}{{ location | pathext }}"
+
+exec:
+  auto_escape: yes
+  on_output:
+    for_entries: |
+      /config/scripts/process_media.sh "{{ location }}" "{{ anime_dir }}" "{{ anime_dst }}" "anime"

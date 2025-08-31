@@ -1,0 +1,7 @@
+template: transmission_client
+from_transmission: {}
+priority: 50
+disable: [seen, seen_info_hash]
+accept_all: yes
+transmission:
+  action: remove

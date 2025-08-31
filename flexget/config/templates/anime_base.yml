@@ -1,0 +1,18 @@
+template: media_base
+priority: 12
+content_size:
+  max: 15000
+  min: 500
+reject:
+  # Reject peliculas
+  - (?i)\b(movie|pelicula|film|gekijouban|compilation)\b: { from: title }
+    # Reject doblajes
+  - (?i)\b(dubbed|dub|english\s+audio|spanish\s+audio)\b: { from: title }
+  - (?i)\b(latino|castellano|español)\b: { from: title }
+    # Reject subtitles
+  - (?i)\b(raw|no\s+sub)\b: { from: title }
+accept:
+  # Groups of fansubs with known names
+  - (?i)\[(SubsPlease|Erai-raws|ASW|EMBER|Judas)\]: { from: title }
+    # Batch packs
+  - (?i)\b(batch|complete|season)\b: { from: title }

@@ -1,0 +1,13 @@
+template: media_base
+imdb_lookup: yes
+tmdb_lookup: yes
+priority: 15
+content_size:
+  max: 50000
+  min: 5000
+reject:
+  # Reject peliculas
+  - (?i)\b(bluray|brrip|bdrip)\b.*(?i)\b(complete|trilogy)\b: { from: title }
+accept:
+  # Season packs
+  - (?i)\b(season|complete|s\d{1,2})\b: { from: title }
