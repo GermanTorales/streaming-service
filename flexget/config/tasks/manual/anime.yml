@@ -2,6 +2,9 @@ template:
   - anime_base
   - transmission_client
 
+set:
+  debug_username: '{? my_anime_list.username ?}'
+
 upgrade:
   tracking: yes
   target: 1080p
@@ -12,31 +15,31 @@ discover:
   release_estimations: loose
   what:
     - next_series_episodes:
-      from_start: yes
-      backfill: yes
+        from_start: yes
+        backfill: yes
   from:
     - nyaa:
-      category: anime eng
-      filter: trusted only
+        category: anime eng
+        filter: trusted only
   interval: 2 hours
 
 manipulate:
   - title:
-    replace:
-      regexp: '\[.*?\]'
-      format: ''
+      replace:
+        regexp: '\[.*?\]'
+        format: ''
   - title:
-    replace:
-      regexp: '\s+'
-      format: ' '
+     replace:
+        regexp: '\s+'
+        format: ' '
   - title:
-    replace:
-      regexp: '\s*-\s*(\d+)'
-      format: ' \1'
+      replace:
+        regexp: '\s*-\s*(\d+)'
+        format: ' \1'
   - title:
-    replace:
-      regexp: '\s+\.(mkv|mp4|avi)$'
-      format: '.\1'
+      replace:
+        regexp: '\s+\.(mkv|mp4|avi)$'
+        format: '.\1'
 
 quality:
   - 1080p
@@ -54,6 +57,16 @@ series:
       timeframe: 3 days
       propers: no
       season_packs: yes
+
+configure_series:
+  from:
+    my_anime_list:
+      username: '{? my_anime_list.username ?}'
+      status:
+        - plan_to_watch
+      airing_status:
+        - finished
+      type: tv
 
 exists_series:
   path:

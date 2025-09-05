@@ -76,6 +76,7 @@ services:
       - TRANSMISSION_PORT=${TRANSMISSION_PORT}
       - TRANSMISSION_USER=${TRANSMISSION_USER}
       - TRANSMISSION_PASS=${TRANSMISSION_PASS}
+      - MY_ANIME_LIST_USERNAME=${MY_ANIME_LIST_USERNAME}
       - TZ=${TZ}
     volumes:
       - ./flexget/config:/config

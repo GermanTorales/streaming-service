@@ -7,6 +7,9 @@ templates:
   transmission_client:
     include: templates/clients.yml
 
+  transmission_cleaner:
+    include: templates/transmission_cleaner.yml
+
   media_base:
     include: templates/media_base.yml
 
@@ -38,14 +41,14 @@ tasks:
   organize_movies:
     include: tasks/organize/movie.yml
 
-  #organize_tv:
-    #include: tasks/organize/tv.yml
+  organize_tv:
+    include: tasks/organize/tv.yml
 
   organize_anime:
     include: tasks/organize/anime.yml
 
   clean_completed_torrents:
-    include: tasks/clean/completed_torrents.yml
+    include: tasks/maintenance/clean_completed_torrents.yml
 
   clean_stalled_torrents:
     include: tasks/maintenance/clean_stalled_torrents.yml
@@ -55,6 +58,9 @@ tasks:
 
   remove_torrents_keep_files:
     include: tasks/maintenance/remove_torrents_keep_files.yml
+
+  purge_dead_torrents:
+    include: tasks/maintenance/purge_dead_torrents.yml
 
 schedules:
   - tasks: ['manual_movies']

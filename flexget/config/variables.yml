@@ -9,3 +9,6 @@ transmission:
   port: 9091
   username: "{{ env('TRANSMISSION_USER') }}"
   password: "{{ env('TRANSMISSION_PASS') }}"
+
+my_anime_list:
+  username: "{{ env('MY_ANIME_LIST_USERNAME') }}"
