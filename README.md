@@ -34,13 +34,25 @@ This project provides a complete streaming infrastructure that automatically dow
 - **[Gluetun](https://github.com/qdm12/gluetun)** - VPN client in a Docker container
 - **[Transmission](https://transmissionbt.com/)** - BitTorrent client with web interface
 - **[FlexGet](https://flexget.com/)** - Automation tool for media organization
+- **[Plex](https://www.plex.tv/media-server-downloads/?cat=computer&plat=linux)** - Media streaming Plex server
 
 ### Features
 
-- **Secure Downloads**: All torrent traffic routed through VPN
-- **Automated Organization**: FlexGet automatically renames and organizes media
-- **Web Interface**: Browser-based access to torrent management
-- **Media Streaming**: Direct streaming from organized media library
+- [x] All torrent traffic routed through VPN
+- [x] Manual addig movies
+- [x] Manual adding tv shows
+- [x] Manual adding animes
+- [x] Automatic movies download
+- [ ] Automatic tv shows download
+- [ ] Automatic animes download
+- [x] Automatic movies organization
+- [ ] Automatic tv show organization
+- [ ] Automatic anime organization
+- [x] Automatic completed torrents cleaner
+- [x] Automatic stalled torrents cleaner
+- [ ] Automatic dead torrents cleaner
+- [ ] Manual purge all torrents
+- [x] Local Plex server
 
 ## Prerequisites
 
@@ -59,19 +71,14 @@ cd streaming-service
 
 ### 2. Configuration
 
-#### VPN Setup (Gluetun)
+Environment Variables:
+Copy the `.env.example` and set the correct values.
 
-Edit the VPN credentials in `docker-compose.yml`:
-
-```yaml
-environment:
-  - VPN_SERVICE_PROVIDER=your_provider  # airvpn, mullvad, protonvpn, etc.
-  - VPN_TYPE=wireguard
-  - WIREGUARD_PRIVATE_KEY=your_private_key
-  - WIREGUARD_PRESHARED_KEY=your_preshared_key
-  - WIREGUARD_ADDRESSES=your_assigned_ip
-  - SERVER_COUNTRIES=Netherlands,Switzerland
+```sh
+cp .env.examples ./env
 ```
+
+#### VPN Setup (Gluetun)
 
 **Getting VPN Credentials:**
 1. Log into your VPN provider's dashboard
@@ -80,19 +87,16 @@ environment:
 
 #### FlexGet Configuration
 
-Configure FlexGet in `flexget/config.yml`:
+The main configuration of FlexGet is in `./flexget/config/config.yml`
 
-```yaml
-templates:
-  global:
-    # Global settings for all tasks
+You can add or remove settings more easily, you only need to add or remove news:
+- Templates
+- Tasks
 
-tasks:
-  organize_movies:
-    # Movie organization rules
-  organize_tv:
-    # TV show organization rules
-```
+The templates are in `./flexget/config/templates`
+The tasks are in `./flexget/config/tasks`
+
+Each folder contains `.yml` subfiles with the name of the task or template. You only need to write the configuration; you don't need to add the type (task or template) or name.
 
 ### 3. Directory Structure
 
@@ -115,14 +119,6 @@ docker-compose up -d
 - **Transmission Web UI**: `http://localhost:9091`
 - **Media Files**: Check organized directories (`./movies`, `./tv_shows`)
 
-### Adding Torrents
-
-1. Access Transmission web interface
-2. Add torrent files or magnet links
-3. FlexGet will automatically organize completed downloads
-
-### Monitoring
-
 #### Check VPN Status
 ```bash
 docker compose exec gluetun curl ifconfig.me
@@ -136,58 +132,6 @@ docker compose logs flexget
 #### Transmission Status
 ```bash
 docker compose logs transmission
-```
-
-## Configuration Details
-
-### Gluetun (VPN)
-
-```yaml
-gluetun:
-  image: qmcgaw/gluetun
-  cap_add:
-    - NET_ADMIN
-  devices:
-    - /dev/net/tun:/dev/net/tun
-  environment:
-    - VPN_SERVICE_PROVIDER=airvpn
-    - VPN_TYPE=wireguard
-    - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
-    - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
-    - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
-    - SERVER_COUNTRIES=Netherlands
-    - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/16
-```
-
-### Transmission
-
-```yaml
-transmission:
-  image: lscr.io/linuxserver/transmission
-  environment:
-    - PUID=1000
-    - PGID=1000
-    - TZ=UTC
-  volumes:
-    - ./transmission:/config
-    - ./downloads:/downloads
-  network_mode: "service:gluetun"  # Routes through VPN
-  depends_on:
-    - gluetun
-```
-
-### FlexGet
-
-```yaml
-flexget:
-  image: wiserain/flexget
-  environment:
-    - TZ=UTC
-  volumes:
-    - ./flexget:/config
-    - ./downloads:/downloads
-    - ./movies:/movies
-    - ./tv_shows:/tv_shows
 ```
 
 ## File Organization
@@ -216,98 +160,12 @@ tv_shows/
 │       └── S02E01 - Episode Title.mkv
 ```
 
-## Performance Optimization
-
-### VPN Server Selection
-- **Netherlands**: Generally fastest for European users
-- **Switzerland**: Good privacy laws and speed
-- **Canada**: Good for North American users
-
-### Transmission Settings
-- **Peer Limit**: 200-300
-- **Upload Slots**: 8-12
-- **Speed Limits**: Set according to your connection
-- **Port Forwarding**: Enable if your VPN supports it
-
-### FlexGet Optimization
-- **Schedule**: Run every 30-60 minutes
-- **IMDB Lookup**: Enable for better metadata
-- **Quality Filters**: Configure preferred resolutions
-
-## Troubleshooting
-
-### Common Issues
-
-#### VPN Connection Problems
-```bash
-# Check VPN status
-docker compose logs gluetun
-
-# Verify IP address
-docker compose exec gluetun curl ifconfig.me
-```
-
-#### Slow Download Speeds
-```bash
-# Test speed through VPN
-docker exec gluetun wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test100.zip
-```
-
-#### FlexGet Not Organizing
-```bash
-# Check FlexGet logs
-docker compose logs flexget
-
-# Manual execution
-docker compose exec flexget flexget execute --now
-```
-
-#### Permission Issues
-```bash
-# Fix ownership
-sudo chown -R $USER:$USER downloads movies tv_shows
-```
-
-### Service Management
-
-#### Restart Services
-```bash
-docker-compose restart
-```
-
-#### Update Containers
-```bash
-docker-compose pull
-docker-compose up -d
-```
-
-#### Reset FlexGet Memory
-```bash
-docker exec flexget flexget reset-plugin seen
-```
-
 ## Security Considerations
 
 - All torrent traffic is routed through VPN
 - No logs are kept by default
 - Media files are organized locally
 - Web interfaces are accessible only on local network
-
-## Environment Variables
-
-Create a `.env` file for sensitive information:
-
-```env
-# VPN Configuration
-WIREGUARD_PRIVATE_KEY=your_private_key
-WIREGUARD_PRESHARED_KEY=your_preshared_key
-WIREGUARD_ADDRESSES=your_assigned_ip
-
-# User Configuration
-PUID=1000
-PGID=1000
-TZ=America/New_York
-```
 
 ## Supported VPN Providers
 
@@ -329,11 +187,6 @@ TZ=America/New_York
 - **qmcgaw/gluetun**: VPN client container
 - **lscr.io/linuxserver/transmission**: BitTorrent client
 - **wiserain/flexget**: Media automation tool
-
-### Regular Maintenance
-- **Weekly**: Check VPN connection and speeds
-- **Monthly**: Update container images
-- **As needed**: Clean up old torrents and completed downloads
 
 ## License
 
