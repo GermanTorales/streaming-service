@@ -22,10 +22,10 @@ services:
     volumes:
       - ./gluetun:/gluetun
     ports:
-      - "9091:9091"       # Transmission Web UI
-      - "51413:51413"     # Transmission peer port
+      - "9091:9091" # Transmission Web UI
+      - "51413:51413" # Transmission peer port
       - "51413:51413/udp"
-      - "5050:5050"       # FlexGet Web UI
+      - "5050:5050" # FlexGet Web UI
     restart: unless-stopped
     networks:
       - default
@@ -33,7 +33,7 @@ services:
   transmission:
     image: lscr.io/linuxserver/transmission:latest
     container_name: transmission
-    network_mode: "service:gluetun"  # Sale a Internet SOLO por la VPN
+    network_mode: "service:gluetun" # Only VPN
     depends_on:
       - gluetun
     environment:
@@ -62,7 +62,7 @@ services:
   flexget:
     image: wiserain/flexget:3.5
     container_name: flexget
-    network_mode: "service:gluetun"  # También a través de la VPN
+    network_mode: "service:gluetun" # Only VPN
     depends_on:
       - gluetun
       - transmission
@@ -90,7 +90,6 @@ services:
   plex:
     image: linuxserver/plex:latest
     container_name: plex
-    # Opción 1: Host networking (como tienes ahora)
     network_mode: host
     hostname: plex
     environment:
@@ -104,4 +103,3 @@ services:
       - ${MEDIA_PATH}/series:/series:ro
       - ${MEDIA_PATH}/animes:/animes:ro
     restart: unless-stopped
-

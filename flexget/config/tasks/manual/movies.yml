@@ -18,7 +18,11 @@ discover:
         category: movies
         sort_by: seeds
     - yts: yes
-    - torrentz: good
+    - solidtorrents:
+        category: Video
+        sort_by: leechers
+        remove_potentially_unsafe: yes
+        url: https://solidtorrents.net
     - limetorrents:
         category: movies
   interval: 2 hours
@@ -43,4 +47,3 @@ limit_new: 1
 transmission:
   path: "/downloads/movies/complete"
   ratio: 2.0
-

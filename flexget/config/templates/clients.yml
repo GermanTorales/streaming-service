@@ -1,5 +1,7 @@
 transmission:
-  host: '{? transmission.host ?}'
-  port: '{? transmission.port ?}'
-  username: '{? transmission.username ?}'
-  password: '{? transmission.password ?}'
+  host: "{? transmission.host ?}"
+  port: "{? transmission.port ?}"
+  username: "{? transmission.username ?}"
+  password: "{? transmission.password ?}"
+  bandwidth_priority: 1
+  include_subs: yes
