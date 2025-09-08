@@ -17,24 +17,15 @@ discover:
     - piratebay:
         category: tv
         sort_by: seeds
-    - torrentz: good
+    - magnetdl:
+        category: tv
     - limetorrents:
         category: tv
   interval: 12 hours
 
-quality:
-  - 1080p webdl
-  - 1080p webrip
-  - 1080p bluray
-  - 1080p
-  - 720p webdl
-  - 720p webrip
-  - 720p bluray
-  - 720p hdtv
-  - 720p
-
 series:
-  - "Dopesick":
+  settings:
+    general:
       identified_by: ep
       exact: yes
       upgrade: yes
@@ -42,7 +33,15 @@ series:
       timeframe: 14 days
       propers: yes
       season_packs: yes
+      qualities:
+        - 1080p
+        - 1080i
+        - 720p
+        - 720i
       quality: 1080p
+  general:
+    - "Dopesick"
+    - "Playlist"
 
 exists_series:
   - "/series"
