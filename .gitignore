@@ -14,6 +14,7 @@ gluetun/*
 
 # Transmission data - ignorar todo excepto configuración
 transmission/*
+!transmission/config
 !transmission/config/settings.json
 
 # Flexget - ignorar todo excepto configuración
