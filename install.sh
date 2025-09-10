@@ -119,7 +119,6 @@ alias fgamovie='$project_dir/flexget/config/scripts/add_movie.sh'
 alias fglmovies='docker compose -f "$project_dir/docker-compose.yml" exec -T flexget flexget movie-list list manual_movies'
 alias fgltv='docker compose -f "$project_dir/docker-compose.yml" exec -T flexget flexget series list all'
 alias fge='$project_dir/flexget/config/scripts/execute_task.sh'
-
 EOF
 }
 
