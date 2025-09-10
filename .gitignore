@@ -14,11 +14,23 @@ gluetun/*
 
 # Transmission data - ignorar todo excepto configuración
 transmission/*
+transmission/config/resume/*
+transmission/config/*.torrent
+transmission/config/torrents/*
+transmission/config/*.dat
+transmission/config/bandwidth-groups.json
+transmission/config/stats.json
+
 !transmission/config
 !transmission/config/settings.json
 
 # Flexget - ignorar todo excepto configuración
 flexget/*
+flexget/config/cached_resources/*
+flexget/config/*.sqlite
+flexget/config/received/*
+flexget/config/.config-lock
+
 !flexget/config
 !flexget/config/config.yml
 !flexget/config/custom-cont-init.d
@@ -35,3 +47,8 @@ logs/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+	transmission/config/resume/256582260f9b3a9b65f35a92add4f3d2a48c4585.resume
+	transmission/config/resume/53f76690d08e70ff0a705bd0fd61d81fdfa6511e.resume
+	transmission/config/resume/9c8fa35b20927d94510992879b183259f9c7be51.resume
+	transmission/config/stats.json
