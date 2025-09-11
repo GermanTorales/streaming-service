@@ -141,12 +141,10 @@ FlexGet automatically organizes media using these patterns:
 ### Movies
 ```
 movies/
-├── Action/
-│   └── Movie Title (Year)/
-│       └── Movie Title (Year).mkv
-└── Drama/
-    └── Another Movie (Year)/
-        └── Another Movie (Year).mp4
+├── Movie Title (Year)/
+│             └── Movie Title (Year).mkv
+├── Another Movie (Year)/
+│             └── Another Movie (Year).mp4
 ```
 
 ### TV Shows
