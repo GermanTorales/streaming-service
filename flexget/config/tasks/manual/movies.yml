@@ -32,8 +32,13 @@ quality:
   - 1080p bluray
   - 1080p webdl
   - 1080p webrip
+  - 1080p
   - 2160p bluray
   - 2160p webdl
+  - 2160p
+  - 720p bluray
+  - 720p
+  - dvdrip
 
 list_match:
   from:

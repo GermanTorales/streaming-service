@@ -63,12 +63,12 @@ tasks:
     include: tasks/maintenance/purge_dead_torrents.yml
 
 schedules:
-  - tasks: ['manual_movies']
+  - tasks: ["manual_movies"]
+    interval:
+      hours: 1
+  - tasks: ["organize_movies"]
     interval:
       hours: 2
-  - tasks: ['organize_movies']
-    interval:
-      hours: 2
-  - tasks: ['clean_completed_torrents', 'clean_stalled_torrents']
+  - tasks: ["clean_completed_torrents", "clean_stalled_torrents"]
     interval:
       hours: 6
