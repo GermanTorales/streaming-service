@@ -84,12 +84,12 @@ add_movie() {
 
   if [[ -n "$imdb_id" ]]; then
     log_info "Trying to add with IMDb ID: $imdb_id"
-    if docker compose -f "$compose_file" exec -T flexget flexget movie-list add manual_movies imdb_id="$imdb_id" >/dev/null 2>&1; then
+    if docker compose -f "$compose_file" exec flexget bash -c "flexget movie-list add manual_movies '$movie_title' -i imdb_id='$imdb_id'" >/dev/null 2>&1; then
       success=true
     fi
   else
     log_info "Trying add movie"
-    if docker compose -f "$compose_file" exec -T flexget bash -c "flexget movie-list add manual_movies '$movie_title'" >/dev/null 2>&1; then
+    if docker compose -f "$compose_file" exec flexget bash -c "flexget movie-list add manual_movies '$movie_title'" >/dev/null 2>&1; then
       success=true
     fi
   fi
@@ -97,7 +97,7 @@ add_movie() {
   # Check if it was actually added
   sleep 1
   local after_count
-  after_count=$(docker compose -f "$compose_file" exec -T flexget flexget movie-list list manual_movies 2>/dev/null | grep -c "│" || echo "0")
+  after_count=$(docker compose -f "$compose_file" exec flexget flexget movie-list list manual_movies 2>/dev/null | grep -c "│" || echo "0")
 
   if [[ "$success" == "true" ]]; then
     log_success "Movie '$movie_title' added successfully!"
@@ -105,7 +105,7 @@ add_movie() {
     # Show current list
     echo
     log_info "Current movie list:"
-    docker compose -f "$compose_file" exec -T flexget flexget movie-list list manual_movies 2>/dev/null
+    docker compose -f "$compose_file" exec flexget flexget movie-list list manual_movies 2>/dev/null
   else
     log_error "Failed to add movie '$movie_title'"
     log_info "Run './debug_flexget.sh' for detailed troubleshooting"
@@ -150,7 +150,7 @@ show_status() {
   if [[ "$status" == "running" ]]; then
     echo
     echo "Current movies:"
-    docker compose -f "$compose_file" exec -T flexget flexget movie-list list manual_movies 2>/dev/null |
+    docker compose -f "$compose_file" exec flexget flexget movie-list list manual_movies 2>/dev/null |
       grep -E "^\s*│" | head -10
   fi
 }

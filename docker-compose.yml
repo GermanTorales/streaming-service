@@ -9,6 +9,7 @@ services:
     environment:
       - VPN_SERVICE_PROVIDER=airvpn
       - VPN_TYPE=wireguard
+      - SERVER_COUNTRIES=Brazil
       - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
       - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
       - WIREGUARD_ADDRESS=${WIREGUARD_ADDRESS}
@@ -19,6 +20,7 @@ services:
       - BLOCK_MALICIOUS=off
       - BLOCK_SURVEILLANCE=off
       - BLOCK_ADS=off
+      - UPDATER_PERIOD=24h
     volumes:
       - ./gluetun:/gluetun
     ports:

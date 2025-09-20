@@ -8,7 +8,7 @@ filesystem:
 accept_all: yes
 seen: local
 tmdb_lookup: yes
-require_field: [ movie_name, imdb_id, tmdb_year ]
+require_field: [movie_name, imdb_id, tmdb_year]
 
 set:
   movie_dir: "/movies/{{ movie_name }} ({{ movie_year }}) {{ imdb_id }}"
