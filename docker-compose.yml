@@ -14,7 +14,7 @@ services:
       - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
       - WIREGUARD_ADDRESS=${WIREGUARD_ADDRESS}
       - DOT=off
-      - FIREWALL_VPN_INPUT_PORTS=51413
+      - FIREWALL_VPN_INPUT_PORTS=${PORTFORWARDING}
       - FIREWALL_OUTBOUND_SUBNETS=192.168.0.0/16,10.0.0.0/8
       - DNS_ADDRESS=1.1.1.1
       - BLOCK_MALICIOUS=off
@@ -25,8 +25,8 @@ services:
       - ./gluetun:/gluetun
     ports:
       - "9091:9091" # Transmission Web UI
-      - "51413:51413" # Transmission peer port
-      - "51413:51413/udp"
+      - "${PORTFORWARDING}:${PORTFORWARDING}"
+      - "${PORTFORWARDING}:${PORTFORWARDING}/udp"
       - "5050:5050" # FlexGet Web UI
     restart: unless-stopped
     networks:

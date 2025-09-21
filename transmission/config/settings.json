@@ -30,7 +30,7 @@
     "peer-congestion-algorithm": "",
     "peer-limit-global": 200,
     "peer-limit-per-torrent": 50,
-    "peer-port": 51413,
+    "peer-port": 17956,
     "peer-port-random-high": 65535,
     "peer-port-random-low": 49152,
     "peer-port-random-on-start": false,
