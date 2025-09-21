@@ -12,16 +12,29 @@ upgrade:
 
 discover:
   what:
-    - movie_list: manual_movies
+    - movie_list:
+        list_name: manual_movies
+        strip_year: yes
+
   from:
-    - piratebay:
-        category: movies
-        sort_by: seeds
     - yts: yes
     - limetorrents:
         category: movies
-  interval: 2 hours
+    - piratebay:
+        category: movies
+        sort_by: seeds
+  interval: 3 hours
+  limit: 50
   release_estimations: ignore
+
+list_match:
+  from:
+    - movie_list:
+        list_name: manual_movies
+        strip_year: yes
+
+require_field:
+  - quality
 
 quality:
   - 1080p bluray
@@ -31,15 +44,13 @@ quality:
   - 2160p bluray
   - 2160p webdl
   - 2160p
-  - bluray h264
-  - bluray
   - 720p bluray
   - 720p
+  - bluray h264
+  - webdl h264
+  - webrip h264
+  - h264
   - dvdrip
-
-list_match:
-  from:
-    - movie_list: manual_movies
 
 exists_movie:
   - "/movies"
@@ -49,3 +60,8 @@ limit_new: 1
 transmission:
   path: "/downloads/movies/complete"
   ratio: 2.0
+
+retry_failed:
+  retry_time: 30 minutes
+  retry_time_multiplier: 2
+  max_retries: 3

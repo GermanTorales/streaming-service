@@ -1,10 +1,21 @@
 template: media_base
-imdb_lookup: yes
-tmdb_lookup: yes
+#tmdb_lookup: yes
 priority: 10
+
 content_size:
-  max: 20000
-  min: 1500
+  - max: 2000
+    min: 700
+    quality: "dvdrip"
+  - max: 4000
+    min: 800
+    quality: "720p"
+  - max: 12000
+    min: 2000
+    quality: "1080p"
+  - max: 25000
+    min: 8000
+    quality: "2160p"
+
 reject:
   # Reject collections and packs
   - (?i)\b(collection|trilogy|pack|complete|boxset|box.set)\b: { from: title }

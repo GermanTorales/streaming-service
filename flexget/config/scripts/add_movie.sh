@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Simple FlexGet Movie Manager
-# Simplified version without complex path detection
-
 set -e # Exit on error
 
 # Colors
@@ -43,7 +40,6 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 # Main function to add movie
 add_movie() {
   local movie_title="$1"
-  local imdb_id="${2:-}"
 
   # Find compose file
   local compose_file
@@ -82,27 +78,17 @@ add_movie() {
 
   local success=false
 
-  if [[ -n "$imdb_id" ]]; then
-    log_info "Trying to add with IMDb ID: $imdb_id"
-    if docker compose -f "$compose_file" exec flexget bash -c "flexget movie-list add manual_movies '$movie_title' -i imdb_id='$imdb_id'" >/dev/null 2>&1; then
-      success=true
-    fi
-  else
-    log_info "Trying add movie"
-    if docker compose -f "$compose_file" exec flexget bash -c "flexget movie-list add manual_movies '$movie_title'" >/dev/null 2>&1; then
-      success=true
-    fi
+  log_info "Trying add movie..."
+  if docker compose -f "$compose_file" exec flexget flexget --loglevel debug movie-list add manual_movies "$movie_title" >/dev/null 2>&1; then
+    success=true
   fi
 
   # Check if it was actually added
   sleep 1
-  local after_count
-  after_count=$(docker compose -f "$compose_file" exec flexget flexget movie-list list manual_movies 2>/dev/null | grep -c "│" || echo "0")
 
   if [[ "$success" == "true" ]]; then
     log_success "Movie '$movie_title' added successfully!"
 
-    # Show current list
     echo
     log_info "Current movie list:"
     docker compose -f "$compose_file" exec flexget flexget movie-list list manual_movies 2>/dev/null
@@ -111,26 +97,6 @@ add_movie() {
     log_info "Run './debug_flexget.sh' for detailed troubleshooting"
     return 1
   fi
-}
-
-# Show help
-show_help() {
-  cat <<EOF
-${BLUE}FlexGet Movie Manager (Simple Version)${NC}
-
-${YELLOW}USAGE:${NC}
-  $0 "MOVIE_TITLE" [IMDB_ID]
-
-${YELLOW}EXAMPLES:${NC}
-  $0 "The Matrix"
-  $0 "Inception" "tt1375666"
-
-${YELLOW}OPTIONS:${NC}
-  -h, --help    Show this help
-  -s, --status  Show FlexGet status
-
-Script location: $SCRIPT_DIR
-EOF
 }
 
 # Show status
@@ -155,22 +121,4 @@ show_status() {
   fi
 }
 
-# Main execution
-case "${1:-}" in
--h | --help)
-  show_help
-  exit 0
-  ;;
--s | --status)
-  show_status
-  exit 0
-  ;;
-"")
-  log_error "Movie title is required"
-  show_help
-  exit 1
-  ;;
-*)
-  add_movie "$@"
-  ;;
-esac
+add_movie "$@"

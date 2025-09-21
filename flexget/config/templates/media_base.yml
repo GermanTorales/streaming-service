@@ -9,25 +9,32 @@ regexp:
     - (?i)\bhc\s+(kor|chi|jap|ger|fre|ita|rus):
         from: title
     # 3D Formats
-    - '(?i)\b3d\b(?!.*animation)':
+    - (?i)\b3d\b(?!.*animation):
         from: title
-    - "(?i)(hsbs|h-?sbs|half.?sbs)":
+    - (?i)(hsbs|h-?sbs|half.?sbs):
         from: title
-    - "(?i)(sbs|side.?by.?side)":
+    - (?i)(sbs|side.?by.?side):
         from: title
-    - "(?i)(hou|h-?ou|half.?ou)":
+    - (?i)(hou|h-?ou|half.?ou):
         from: title
-    - '(?i)(over.?under|ou\b)':
+    - (?i)(over.?under|ou\b):
         from: title
-    - "(?i)(tab|top.?and.?bottom)":
+    - (?i)(tab|top.?and.?bottom):
         from: title
-    - "(?i)(mvc|frame.?pack)":
+    - (?i)(mvc|frame.?pack):
         from: title
-    - "(?i)(stereoscopic|anaglyph)":
+    - (?i)(stereoscopic|anaglyph):
         from: title
-    - "(?i)(bluray.?3d|bd3d|3d.?bluray)":
+    - (?i)(bluray.?3d|bd3d|3d.?bluray):
         from: title
-    - "(?i)(imax.?3d|3d.?imax)":
+    - (?i)(imax.?3d|3d.?imax):
+        from: title
+    - (?i)\b(KORSUB|STUTTERSHIT|CM8|HELLRAZ0R|D3FiL3R)\b:
+        from: title
+    - (?i)\b(fake|bad|corrupt|incomplete)\b:
+        from: title
+    - (?i)hdtv.*(?<!tv.show):
         from: title
   accept:
+    - (?i)\b(SPARKS|FGT|RARBG|PSA|DON|KRaLiMaRKo)\b: { from: title }
     - (?i)\b(eng|english|spa|spanish|multi)\s+(sub|subtitle): { from: title }

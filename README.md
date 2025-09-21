@@ -60,6 +60,9 @@ This project provides a complete streaming infrastructure that automatically dow
 - VPN subscription with WireGuard support (recommended: Mullvad, AirVPN, ProtonVPN)
 - Port forwarding capability (optional, for better seeding)
 
+> [!NOTE]
+> I recommend you to use `AirVPN` because it allow portforwarding
+
 ## Quick Start
 
 ### 1. Clone the Repository
@@ -165,15 +168,6 @@ tv_shows/
 - Media files are organized locally
 - Web interfaces are accessible only on local network
 
-## Supported VPN Providers
-
-- [AirVPN](https://airvpn.org/)
-- [Mullvad](https://mullvad.net/)
-- [ProtonVPN](https://protonvpn.com/)
-- [Windscribe](https://windscribe.com/)
-- [Surfshark](https://surfshark.com/)
-- [And many more...](https://github.com/qdm12/gluetun/wiki)
-
 ## Tools and Dependencies
 
 ### Core Tools
@@ -185,6 +179,11 @@ tv_shows/
 - **qmcgaw/gluetun**: VPN client container
 - **lscr.io/linuxserver/transmission**: BitTorrent client
 - **wiserain/flexget**: Media automation tool
+
+### Error
+
+Movies sometimes doesn't not match with any torrents get from sources. That happen because `flexget` parse the name that you enter and use the name getting from `IMDB`. For that sometimes
+you can add a movie and the process of download reject all torrents, it's for the name, not for the quality or something else.
 
 ## License
 

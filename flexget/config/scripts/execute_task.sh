@@ -78,7 +78,7 @@ execute_flexget_command() {
   echo -e "${CYAN}════════════════════════════════════════════════════════════════${NC}"
 
   # Execute the FlexGet command
-  if docker compose -f "$COMPOSE_FILE" exec -T flexget flexget execute --tasks "$task_name" --discover-now; then
+  if docker compose -f "$COMPOSE_FILE" exec -T flexget flexget --loglevel debug execute --tasks "$task_name" --discover-now; then
     echo
     echo -e "${CYAN}════════════════════════════════════════════════════════════════${NC}"
     log_success "Task '$task_name' completed successfully!"
