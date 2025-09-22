@@ -5,6 +5,7 @@ template:
   - transmission_client
 
 upgrade:
+  identified_by: imdb_id
   tracking: yes
   target: 1080p bluray
   timeframe: 7 days

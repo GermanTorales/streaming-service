@@ -3,10 +3,10 @@ no_entries_ok: yes
 regexp:
   reject:
     # Reject languages not desired (audio/dub)
-    - (?i)\b(korean|chinese|japanese|german|french|italian|russian)\s+(audio|dub)\b:
+    - (?i)\b(swedish|korean|chinese|japanese|german|french|italian|russian)\s+(audio|dub)\b:
         from: title
     # Reject hardcoded subs in specific languages
-    - (?i)\bhc\s+(kor|chi|jap|ger|fre|ita|rus):
+    - (?i)\bhc\s+(swe|kor|chi|jap|ger|fre|ita|rus):
         from: title
     # 3D Formats
     - (?i)\b3d\b(?!.*animation):
