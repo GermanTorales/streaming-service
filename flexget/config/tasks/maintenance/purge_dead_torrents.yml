@@ -21,10 +21,10 @@ if:
 exec:
   on_accept:
     for_entries: |
-      echo "Eliminando torrent muerto: {{title}}"
-      echo "  - Progreso: {{transmission_progress}}%"
+      echo "Removing dead torrents: {{title}}"
+      echo "  - Progress: {{transmission_progress}}%"
       echo "  - Peers: {{transmission_peers}}"
-      echo "  - Días inactivo: {{transmission_idle / 86400|int}}"
+      echo "  - Inactive days: {{transmission_idle / 86400|int}}"
 
 transmission:
   action: remove
