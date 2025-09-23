@@ -12,10 +12,10 @@ if:
 exec:
   on_accept:
     for_entries: |
-      echo "Eliminando torrent completado: {{title}}"
+      echo Removing completed torrents: {{title}}"
       echo "  - Ratio: {{transmission_ratio}}"
-      echo "  - Tiempo sembrando: {{transmission_seed_time}} segundos"
-      echo "  - Tamaño: {{transmission_size|filesizeformat}}"
+      echo "  - Seeding time: {{transmission_seed_time}} segundos"
+      echo "  - Size: {{transmission_size|filesizeformat}}"
 
 transmission:
   action: purge
