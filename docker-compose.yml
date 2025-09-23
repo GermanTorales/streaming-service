@@ -54,6 +54,7 @@ services:
       - TRANSMISSION_INCOMPLETE_DIR=/downloads/incomplete
       - TRANSMISSION_WATCH_DIR_ENABLED=true
       - TRANSMISSION_WATCH_DIR=/watch
+      - TRANSMISSION_PEER_PORT=${PORTFORWARDING}
       - TZ=${TZ}
     volumes:
       - ./transmission/config:/config

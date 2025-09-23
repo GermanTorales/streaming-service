@@ -1,0 +1,24 @@
+template: transmission_client
+
+from_transmission:
+  only_completed: yes
+
+priority: 10
+
+interval:
+  minutes: 30
+
+if:
+  - transmission_ratio >= 0.2: accept
+  - transmission_seed_time > 259200: accept
+
+exec:
+  on_accept:
+    for_entries: |
+      echo "Eliminando torrent completado: {{title}}"
+      echo "  - Ratio: {{transmission_ratio}}"
+      echo "  - Tiempo sembrando: {{transmission_seed_time}} segundos"
+      echo "  - Tamaño: {{transmission_size|filesizeformat}}"
+
+transmission:
+  action: purge

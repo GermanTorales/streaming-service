@@ -47,17 +47,8 @@ tasks:
   organize_anime:
     include: tasks/organize/anime.yml
 
-  clean_completed_torrents:
-    include: tasks/maintenance/clean_completed_torrents.yml
-
-  clean_stalled_torrents:
-    include: tasks/maintenance/clean_stalled_torrents.yml
-
-  purge_all_torrents:
-    include: tasks/maintenance/purge_all_torrents.yml
-
-  remove_torrents_keep_files:
-    include: tasks/maintenance/remove_torrents_keep_files.yml
+  transmission_report:
+    include: tasks/maintenance/transmission_report.yml
 
   purge_dead_torrents:
     include: tasks/maintenance/purge_dead_torrents.yml
@@ -69,6 +60,9 @@ schedules:
   - tasks: ["organize_movies"]
     interval:
       hours: 2
-  - tasks: ["clean_completed_torrents", "clean_stalled_torrents"]
+  - tasks: [clean_completed_seeded]
     interval:
-      hours: 6
+      minutes: 30
+  - tasks: [transmission-report]
+    schedule:
+      hour: 9

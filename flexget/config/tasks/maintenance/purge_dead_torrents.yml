@@ -1,7 +1,30 @@
 template: transmission_cleaner
+
+from_transmission: {}
+
+priority: 20
+interval: 6 hours
+
 if:
-  - transmission_peers == 0 and transmission_date_added < now - timedelta(days=2): accept
-  - transmission_progress == 0 and transmission_date_added < now - timedelta(days=1): accept
+  - all:
+      - transmission_peers == 0
+      - transmission_availability < 1.0
+      - transmission_date_added < now - timedelta(days=7)
+    accept:
+
+  - all:
+      - transmission_progress > 0
+      - transmission_progress < 100
+      - transmission_idle > 604800
+    accept:
+
+exec:
+  on_accept:
+    for_entries: |
+      echo "Eliminando torrent muerto: {{title}}"
+      echo "  - Progreso: {{transmission_progress}}%"
+      echo "  - Peers: {{transmission_peers}}"
+      echo "  - Días inactivo: {{transmission_idle / 86400|int}}"
+
 transmission:
-  action: purge
-interval: 12 hours
+  action: remove
