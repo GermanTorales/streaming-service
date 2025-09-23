@@ -47,6 +47,9 @@ tasks:
   organize_anime:
     include: tasks/organize/anime.yml
 
+  clean_completed_seeded:
+    include: tasks/organize/clean_completed_seeded.yml
+
   transmission_report:
     include: tasks/maintenance/transmission_report.yml
 

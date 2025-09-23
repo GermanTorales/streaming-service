@@ -5,9 +5,6 @@ from_transmission:
 
 priority: 10
 
-interval:
-  minutes: 30
-
 if:
   - transmission_ratio >= 0.2: accept
   - transmission_seed_time > 259200: accept

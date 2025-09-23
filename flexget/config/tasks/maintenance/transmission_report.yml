@@ -1,39 +1,14 @@
-template: transmission_client
-
 priority: 100
-
-interval:
-  hours: 24
-
 manual: yes
+disable:
+  - seen
+  - seen_info_hash
+  - remember_rejected
 
 from_transmission: {}
-
-manipulate:
-  - total_size:
-      from: transmission_size
-      extract: ".*"
-  - days_active:
-      from: transmission_date_added
-      extract: ".*"
-
-group_by:
-  field: transmission_status
+accept_all: yes
 
 exec:
-  for_accepted: |
-    echo "=== TRANSMISSION REPORT ==="
-    echo "Total torrents: {{entries|length}}"
-    echo ""
-    echo "By status:"
-    echo "  - Downloading: {{entries|selectattr('transmission_status', 'equalto', 'downloading')|list|length}}"
-    echo "  - Seeding: {{entries|selectattr('transmission_status', 'equalto', 'seeding')|list|length}}"
-    echo "  - Stopeed: {{entries|selectattr('transmission_status', 'equalto', 'stopped')|list|length}}"
-    echo "  - Verifying: {{entries|selectattr('transmission_status', 'equalto', 'checking')|list|length}}"
-    echo ""
-    echo "Stadistics:"
-    echo "  - Ratio: {{entries|map(attribute='transmission_ratio')|sum / entries|length|round(2)}}"
-    echo "  - Total space: {{entries|map(attribute='transmission_size')|sum|filesizeformat}}"
-    echo ""
-    echo "Torrents with errors:"
-    {{entries|selectattr('transmission_peers', 'equalto', 0)|list}}
+  on_output:
+    for_accepted: |
+      echo "[{{ "%-10s"|format(transmission_status|upper) }}] {{ "%-50s"|format(title|truncate(50, True)) }} | Ratio: {{ "%-5s"|format(transmission_ratio|round(2)|string) }} |{% if transmission_progress == 100 and transmission_ratio >= 2.0 %} ✅ CLEAN{% elif transmission_progress == 100 and transmission_ratio < 2.0 %} 🌱 SEEDING{% elif transmission_progress == 0 %} ⚠️ NOT STARTED{% elif transmission_progress > 0 and transmission_progress < 100 %} ⏬ DOWNLOADING {{transmission_progress}}%{% else %} 📊 {{transmission_progress}}%{% endif %}"
