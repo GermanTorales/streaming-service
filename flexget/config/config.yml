@@ -48,7 +48,7 @@ tasks:
     include: tasks/organize/anime.yml
 
   clean_completed_seeded:
-    include: tasks/organize/clean_completed_seeded.yml
+    include: tasks/maintenance/clean_completed_seeded.yml
 
   transmission_report:
     include: tasks/maintenance/transmission_report.yml
@@ -66,6 +66,3 @@ schedules:
   - tasks: [clean_completed_seeded]
     interval:
       minutes: 30
-  - tasks: [transmission-report]
-    schedule:
-      hour: 9
