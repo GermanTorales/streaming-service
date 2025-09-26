@@ -1,21 +1,28 @@
 template: transmission_client
 
-from_transmission:
-  only_completed: yes
+disable:
+  - seen
+  - seen_info_hash
+
+from_transmission: {}
 
 priority: 10
 
 if:
-  - transmission_ratio >= 0.2: accept
+  - transmission_ratio >= 2.0: accept
   - transmission_seed_time > 259200: accept
 
 exec:
-  on_accept:
+  on_output:
     for_entries: |
-      echo Removing completed torrents: {{title}}"
-      echo "  - Ratio: {{transmission_ratio}}"
-      echo "  - Seeding time: {{transmission_seed_time}} segundos"
-      echo "  - Size: {{transmission_size|filesizeformat}}"
+      echo "Removing completed torrents: {{title}}"
+      echo "  - Ratio: {{transmission_ratio|default('N/A')}}"
+      {% if transmission_seed_time is defined %}
+      echo "  - Seeding time: {{transmission_seed_time}} seconds"
+      {% endif %}
+      {% if transmission_size_when_done is defined %}
+      echo "  - Size: {{transmission_size_when_done|filesizeformat}}"
+      {% endif %}
 
 transmission:
   action: purge

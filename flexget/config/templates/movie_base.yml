@@ -1,5 +1,4 @@
 template: media_base
-#tmdb_lookup: yes
 priority: 10
 
 content_size:

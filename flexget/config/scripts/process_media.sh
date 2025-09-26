@@ -15,13 +15,13 @@ acquire_lock() {
 
   while ! mkdir "$LOCK_FILE" 2>/dev/null; do
     if [ $count -ge $timeout ]; then
-      echo "[ERROR] Timeout esperando lock para $(basename "$SRC")"
+      echo "[ERROR] Timeout waiting lock for $(basename "$SRC")"
       exit 1
     fi
     sleep 1
     ((count++))
   done
-  echo "[INFO] Lock adquirido para $(basename "$SRC")"
+  echo "[INFO] Lock for $(basename "$SRC")"
 }
 
 cleanup() {
@@ -36,10 +36,10 @@ acquire_lock
 mkdir -p "$TEMP_DIR"
 mkdir -p "$DST_DIR"
 
-echo "[INFO] Procesando $MEDIA_TYPE: $(basename "$SRC")"
+echo "[INFO] Processing $MEDIA_TYPE: $(basename "$SRC")"
 
 if ! command -v ffprobe >/dev/null 2>&1; then
-  echo "[ERROR] ffprobe no encontrado. Moviendo sin verificación"
+  echo "[ERROR] ffprobe not found. Moving without verification"
   mv -n "$SRC" "$DST_DIR/$DST_FILE"
   exit 0
 fi
@@ -48,13 +48,13 @@ vcodec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name \
   -of default=noprint_wrappers=1:nokey=1 "$SRC" 2>/dev/null || echo "unknown")
 vcodec=$(echo "$vcodec" | tr '[:upper:]' '[:lower:]' | xargs)
 
-echo "[INFO] Analizando streams de audio..."
+echo "[INFO] Analyzing audio streams..."
 
 audio_info=$(ffprobe -v error -select_streams a -show_entries stream=index,codec_name \
   -of csv=p=0:nk=1 "$SRC" 2>/dev/null || echo "")
 
 if [ -z "$audio_info" ]; then
-  echo "[WARN] No se encontraron streams de audio"
+  echo "[WARN] Audio streams not found."
   acodecs_list=""
   needs_transcoding=false
 else
@@ -71,7 +71,7 @@ fi
 echo "[INFO] Video: $vcodec, Audio streams: $acodecs_list"
 
 if [[ "$vcodec" != "h264" && "$vcodec" != "h265" && "$vcodec" != "av1" && "$vcodec" != "unknown" ]]; then
-  echo "[WARN] Codec de video no soportado: $vcodec. Moviendo sin cambios."
+  echo "[WARN] Video codec doesn't supported: $vcodec. Moving without changes."
   mv -n "$SRC" "$DST_DIR/$DST_FILE"
   exit 0
 fi
@@ -101,7 +101,7 @@ esac
 
 for acodec in $acodecs_list; do
   if [[ ! "$acodec" =~ ^($SUPPORTED_CODECS|unknown)$ ]]; then
-    echo "[INFO] Stream con codec $acodec requiere transcodificación"
+    echo "[INFO] Stream codec $acodec require transcodification"
     needs_transcoding=true
     break
   fi
@@ -109,33 +109,31 @@ done
 
 if [ "$needs_transcoding" = true ]; then
   if command -v ffmpeg >/dev/null 2>&1; then
-    echo "[INFO] Transcodificando streams de audio incompatibles -> AAC"
+    echo "[INFO] Transcoding incopatibles audio streams to AAC"
 
     TMP_FILE="$TEMP_DIR/$(basename "$DST_FILE")"
 
     if ffmpeg -hide_banner -loglevel error -hwaccel auto -y -i "$SRC" \
       -map 0 -c:v copy -c:s copy -c:a aac -b:a "$AUDIO_BITRATE" $AUDIO_CHANNELS "$TMP_FILE"; then
-      echo "[INFO] Transcodificación exitosa"
+      echo "[INFO] Transcoding success"
 
       mv "$TMP_FILE" "$DST_DIR/$DST_FILE"
-
-      echo "[INFO] Original mantenido para seeding: $SRC"
     else
-      echo "[ERROR] Error en transcodificación. Moviendo original."
+      echo "[ERROR] Transcoding error. Moving the original."
 
       rm -f "$TMP_FILE" 2>/dev/null || true
 
       cp "$SRC" "$DST_DIR/$DST_FILE"
     fi
   else
-    echo "[WARN] ffmpeg no disponible. Moviendo sin cambios."
+    echo "[WARN] ffmpeg not available. Moving without changes."
 
     cp "$SRC" "$DST_DIR/$DST_FILE"
   fi
 else
-  echo "[INFO] Todos los codecs son compatibles. Moviendo sin cambios."
+  echo "[INFO] All codecs are compatibles. Moving without changes."
 
   cp "$SRC" "$DST_DIR/$DST_FILE"
 fi
 
-echo "[INFO] Completado: $DST_FILE"
+echo "[INFO] Completed: $DST_FILE"
