@@ -19,8 +19,8 @@ discover:
 
   from:
     - yts: yes
-    - limetorrents:
-        category: movies
+    #- limetorrents:
+    #   category: movies
     - piratebay:
         category: movies
         sort_by: seeds

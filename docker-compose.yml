@@ -63,7 +63,7 @@ services:
     restart: unless-stopped
 
   flexget:
-    image: wiserain/flexget:3.5
+    image: lscr.io/linuxserver/flexget:3.18.19
     container_name: flexget
     network_mode: "service:gluetun" # Only VPN
     depends_on:
@@ -80,6 +80,10 @@ services:
       - TRANSMISSION_USER=${TRANSMISSION_USER}
       - TRANSMISSION_PASS=${TRANSMISSION_PASS}
       - MY_ANIME_LIST_USERNAME=${MY_ANIME_LIST_USERNAME}
+      - OPENSUBTITLES_USERNAME=${OPENSUBTITLES_USERNAME}
+      - OPENSUBTITLES_PASSWORD=${OPENSUBTITLES_PASSWORD}
+      - ADDIC7ED_USERNAME=${ADDIC7ED_USERNAME}
+      - ADDIC7ED_PASSWORD=${ADDIC7ED_PASSWORD}
       - TZ=${TZ}
     volumes:
       - ./flexget/config:/config
@@ -106,3 +110,21 @@ services:
       - ${MEDIA_PATH}/series:/series:ro
       - ${MEDIA_PATH}/animes:/animes:ro
     restart: unless-stopped
+
+  samba:
+    image: servercontainers/samba
+    container_name: samba
+    restart: unless-stopped
+    ports:
+      - "445:445"
+    environment:
+      - TZ=${TZ}
+      - SAMBA_CONF_WORKGROUP=WORKGROUP
+      - ACCOUNT_pi=${SAMBA_PASSWORD}
+      - UID_pi=1000
+      - GID_pi=1000
+    volumes:
+      - /mnt/storage/movies:/movies
+      - /mnt/storage/series:/tv
+      - /mnt/storage/animes:/animes
+      - ./samba/smb.conf:/etc/samba/smb.conf:ro

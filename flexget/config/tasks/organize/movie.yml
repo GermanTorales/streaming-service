@@ -7,16 +7,30 @@ filesystem:
 
 accept_all: yes
 seen: local
+imdb_lookup: yes
 tmdb_lookup: yes
-require_field: [movie_name, imdb_id, tmdb_year]
 
 duplicates:
   field: location
   action: reject
 
 set:
-  movie_dir: "/movies/{{ movie_name }} ({{ movie_year }}) {{ imdb_id }}"
-  movie_dst: "{{ movie_name }} ({{ movie_year }}){{ location | pathext }}"
+  movie_dir: "{% if tmdb_year %}/movies/{{ movie_name }} ({{ movie_year }}) {{ imdb_id }}{% else %}/movies/{{ location | basename }}{% endif %}"
+
+  #  movie_dir: >
+  #   {% if tmdb_year %}
+  #    /movies/{{ movie_name }} ({{ movie_year }}) {{ imdb_id }}
+  # {% else %}
+  #  /movies/{{ location | basename }}
+  #{% endif %}
+  movie_dst: "{% if tmdb_year %}{{ movie_name }} ({{ movie_year }}){{ location | pathext }}{% else %}{{ location | basename }}{% endif %}"
+
+  #movie_dst: >
+  # {% if tmdb_year %}
+  #  {{ movie_name }} ({{ movie_year }}){{ location | pathext }}
+  #{% else %}
+  # {{ location | basename }}
+  #{% endif %}
 
 exec:
   auto_escape: yes

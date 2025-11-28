@@ -1,10 +1,26 @@
 #!/bin/bash
 set -euo pipefail
 
+log() {
+  echo "[$(date -Iseconds)] $1"
+}
+
 SRC="$1"
 DST_DIR="$2"
 DST_FILE="$3"
 MEDIA_TYPE="${4:-general}"
+DST_DIR="$(echo "$DST_DIR" | tr -d '\r' | sed 's/^[ \t]*//;s/[ \t]*$//')"
+
+log "=== START PROCESS ==="
+log "SRC: $SRC"
+log "DST_DIR: $DST_DIR"
+log "DST_FILE: $DST_FILE"
+log "MEDIA_TYPE: $MEDIA_TYPE"
+log "Hostname: $(hostname)"
+log "User: $(whoami)"
+log "PWD: $(pwd)"
+log "Filesystem for SRC: $(df -h "$SRC" 2>/dev/null | tail -1)"
+log "Filesystem for DST_DIR: $(df -h "$DST_DIR" 2>/dev/null | tail -1)"
 
 LOCK_FILE="/tmp/processing_$(echo "$SRC" | md5sum | cut -d' ' -f1).lock"
 TEMP_DIR="/tmp/media_processing_$$"
@@ -21,7 +37,7 @@ acquire_lock() {
     sleep 1
     ((count++))
   done
-  echo "[INFO] Lock for $(basename "$SRC")"
+  log "Acquired lock: $LOCK_FILE"
 }
 
 cleanup() {
@@ -31,9 +47,17 @@ cleanup() {
 
 trap cleanup EXIT INT TERM
 
+if [ ! -f "$SRC" ]; then
+  log "[ERROR] Source file does not exist: $SRC"
+  exit 1
+fi
+
 acquire_lock
 
+log "Creating temp dir: $TEMP_DIR"
 mkdir -p "$TEMP_DIR"
+
+log "Ensuring destination dir exists: $DST_DIR"
 mkdir -p "$DST_DIR"
 
 echo "[INFO] Processing $MEDIA_TYPE: $(basename "$SRC")"
@@ -68,10 +92,13 @@ else
   done <<<"$audio_info"
 fi
 
-echo "[INFO] Video: $vcodec, Audio streams: $acodecs_list"
+log "Detected video codec: $vcodec"
+log "Detected audio codecs: $acodecs_list"
 
 if [[ "$vcodec" != "h264" && "$vcodec" != "h265" && "$vcodec" != "av1" && "$vcodec" != "unknown" ]]; then
-  echo "[WARN] Video codec doesn't supported: $vcodec. Moving without changes."
+  log "Copying file without transcoding: $SRC → $DST_DIR/$DST_FILE"
+  cp "$SRC" "$DST_DIR/$DST_FILE"
+
   mv -n "$SRC" "$DST_DIR/$DST_FILE"
   exit 0
 fi
@@ -101,7 +128,9 @@ esac
 
 for acodec in $acodecs_list; do
   if [[ ! "$acodec" =~ ^($SUPPORTED_CODECS|unknown)$ ]]; then
-    echo "[INFO] Stream codec $acodec require transcodification"
+    log "Transcoding required → Target codec: AAC ($AUDIO_BITRATE)"
+    log "Destination temp file: $TMP_FILE"
+
     needs_transcoding=true
     break
   fi
@@ -119,7 +148,7 @@ if [ "$needs_transcoding" = true ]; then
 
       mv "$TMP_FILE" "$DST_DIR/$DST_FILE"
     else
-      echo "[ERROR] Transcoding error. Moving the original."
+      log "[ERROR] Transcoding failed, copying original instead."
 
       rm -f "$TMP_FILE" 2>/dev/null || true
 
@@ -136,4 +165,5 @@ else
   cp "$SRC" "$DST_DIR/$DST_FILE"
 fi
 
-echo "[INFO] Completed: $DST_FILE"
+log "COMPLETED → $DST_DIR/$DST_FILE"
+log "=== END PROCESS ==="

@@ -117,8 +117,8 @@ execute_organize_anime() {
   execute_flexget_command "organize_anime" "Anime Organizer Task"
 }
 
-execute_clean_completed_torrents() {
-  execute_flexget_command "clean_completed_torrents" "Clean Completed Torrents Task"
+execute_clean_completed_seeded() {
+  execute_flexget_command "clean_completed_seeded" "Clean Completed Seeded Task"
 }
 
 execute_clean_stalled_torrents() {
@@ -143,7 +143,7 @@ show_menu() {
   echo -e "${CYAN}  4)${NC} Organize Movies   - Organize downloaded movies into final folder"
   echo -e "${CYAN}  5)${NC} Organize TV   - Organize downloaded TV shows into final folder"
   echo -e "${CYAN}  6)${NC} Organize Anime   - Organize downloaded animes into final folder"
-  echo -e "${CYAN}  7)${NC} Clean Completed Torrents   - Remove completed torrents from transmission"
+  echo -e "${CYAN}  7)${NC} Clean Completed Seeded   - Remove completed seeded torrents from transmission"
   echo -e "${CYAN}  8)${NC} Clean Stalled Torrents   - Remove stalled torrents from transmission"
   echo -e "${CYAN}  9)${NC} Purge All Torrents   - Remove all torrents from transmission"
   echo -e "${CYAN}  10)${NC} Purge Dead Torrents   - Remove only dead torrents from transmission"
@@ -184,7 +184,7 @@ get_user_choice() {
       return 0
       ;;
     7)
-      echo "clean_completed_torrents"
+      echo "clean_completed_seeded"
       return 0
       ;;
     8)
@@ -222,7 +222,7 @@ confirm_execution() {
   organize_movies) task_description="organize_movies" ;;
   organize_tv) task_description="organize_tv" ;;
   organize_anime) task_description="organize_anime" ;;
-  clean_completed_torrents) task_description="clean_completed_torrents" ;;
+  clean_completed_seeded) task_description="clean_completed_seeded" ;;
   clean_stalled_torrents) task_description="clean_stalled_torrents" ;;
   purge_all_torrents) task_description="purge_all_torrents" ;;
   purge_dead_torrents) task_description="purge_dead_torrents" ;;
@@ -303,9 +303,9 @@ main() {
         wait_for_enter
       fi
       ;;
-    "clean_completed_torrents")
-      if confirm_execution "clean_completed_torrents"; then
-        execute_clean_completed_torrents
+    "clean_completed_seeded")
+      if confirm_execution "clean_completed_seeded"; then
+        execute_clean_completed_seeded
         wait_for_enter
       fi
       ;;
@@ -370,8 +370,8 @@ if [[ $# -gt 0 ]]; then
     execute_organize_anime
     ;;
   clean_completed_torrents | 7)
-    log_info "Non-interactive mode: Executing clean completed torrents task"
-    execute_clean_completed_torrents
+    log_info "Non-interactive mode: Executing clean completed seeded torrents task"
+    execute_clean_completed_seeded
     ;;
   clean_stalled_torrents | 8)
     log_info "Non-interactive mode: Executing clean stalled torrents task"

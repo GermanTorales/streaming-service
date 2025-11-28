@@ -1,0 +1,29 @@
+disable:
+  - seen
+
+filesystem:
+  path: /movies
+  regexp: '.*\.(avi|mkv|mp4)$'
+  recursive: yes
+  retrieve: files
+
+accept_all: yes
+
+seen: local
+
+subliminal:
+  languages:
+    - en
+    - es
+  providers:
+    - opensubtitles
+    - argenteam
+    - podnapisi
+    - tvsubtitles
+  single: no
+  hearing_impaired: no
+  exact_match: no
+  authentication:
+    opensubtitles:
+      username: "{? opensubtitles.username ?}"
+      password: "{? opensubtitles.password ?}"

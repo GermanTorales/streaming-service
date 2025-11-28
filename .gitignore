@@ -3,6 +3,8 @@
 .env.local
 .env.production
 
+*[\x00-\x1F]*
+
 # Docker
 docker-compose.override.yml
 
@@ -30,10 +32,17 @@ flexget/config/cached_resources/*
 flexget/config/*.sqlite
 flexget/config/received/*
 flexget/config/.config-lock
+flexget/config/.cache
+flexget/config/.flexget/*
+flexget/config/.ash_history
+flexget/config/.bash_history
+flexget/config/None/None
+samba/smb.conf
 
 !flexget/config
 !flexget/config/config.yml
 !flexget/config/custom-cont-init.d
+!flexget/config/.flexget/config.yml
 
 # Logs
 *.log

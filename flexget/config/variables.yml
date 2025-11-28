@@ -12,3 +12,11 @@ transmission:
 
 my_anime_list:
   username: "{{ env('MY_ANIME_LIST_USERNAME') }}"
+
+opensubtitles:
+  username: "{{ env('OPENSUBTITLES_USERNAME') }}"
+  password: "{{ env('OPENSUBTITLES_PASSWORD') }}"
+
+addic7ed:
+  username: "{{ env('ADDIC7ED_USERNAME') }}"
+  passowrd: "{{ env('ADDIC7ED_PASSWORD') }}"

@@ -1,0 +1,78 @@
+variables: /config/variables.yml
+
+templates:
+  global:
+    include: /config/templates/global.yml
+
+  transmission_client:
+    include: /config/templates/clients.yml
+
+  transmission_cleaner:
+    include: /config/templates/transmission_cleaner.yml
+
+  media_base:
+    include: /config/templates/media_base.yml
+
+  movie_base:
+    include: /config/templates/movie_base.yml
+
+  tv_base:
+    include: /config/templates/tv_base.yml
+
+  anime_base:
+    include: /config/templates/anime_base.yml
+
+  reject_series:
+    include: /config/templates/reject_series.yml
+
+  reject_audio_codecs:
+    include: /config/templates/reject_audio_codecs.yml
+
+tasks:
+  manual_movies:
+    include: /config/tasks/manual/movies.yml
+
+  manual_tv:
+    include: /config/tasks/manual/tv.yml
+
+  manual_animes:
+    include: /config/tasks/manual/anime.yml
+
+  movie_subtitles:
+    include: /config/tasks/manual/movie_subtitles.yml
+
+  organize_movies:
+    include: /config/tasks/organize/movie.yml
+
+  organize_tv:
+    include: /config/tasks/organize/tv.yml
+
+  organize_anime:
+    include: /config/tasks/organize/anime.yml
+
+  clean_completed_seeded:
+    include: /config/tasks/maintenance/clean_completed_seeded.yml
+
+  transmission_report:
+    include: /config/tasks/maintenance/transmission_report.yml
+
+  purge_dead_torrents:
+    include: /config/tasks/maintenance/purge_dead_torrents.yml
+
+schedules:
+  - tasks:
+      - manual_movies
+    interval:
+      hours: 1
+  - tasks:
+      - organize_movies
+    interval:
+      hours: 2
+  - tasks:
+      - clean_completed_seeded
+    interval:
+      minutes: 30
+  - tasks:
+      - movie_subtitles
+    interval:
+      minutes: 45
