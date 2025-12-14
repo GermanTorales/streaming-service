@@ -2,11 +2,11 @@ template:
   - tv_base
   - transmission_client
 
-upgrade:
-  tracking: yes
-  target: 1080p
-  timeframe: 14 days
-  propers: yes
+#upgrade:
+#  tracking: yes
+#  target: 1080p
+#  timeframe: 14 days
+#  propers: yes
 
 discover:
   what:
@@ -17,31 +17,183 @@ discover:
     - piratebay:
         category: tv
         sort_by: seeds
-    - magnetdl:
-        category: tv
+    - solidtorrents:
+        category: Video
     - limetorrents:
         category: tv
   interval: 12 hours
 
 series:
-  settings:
-    general:
+  #- Dopesick:
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  - Playlist:
       identified_by: ep
-      exact: yes
-      upgrade: yes
-      target: 1080p
-      timeframe: 14 days
-      propers: yes
       season_packs: yes
-      qualities:
-        - 1080p
-        - 1080i
-        - 720p
-        - 720i
-      quality: 1080p
-  general:
-    - "Dopesick"
-    - "Playlist"
+      timeframe: 12 hours
+      target: 1080p webdl
+      quality: 720p-1080p webdl
+  #- "El Encargado":
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  #- Breaking Bad:
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  - Better Call Saul:
+      identified_by: ep
+      season_packs: yes
+      timeframe: 12 hours
+      target: 1080p webdl
+      quality: 720p-1080p webdl
+  #- "Avatar: The Last Airbender":
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  - "Rick and Morty":
+      identified_by: ep
+      season_packs: yes
+      timeframe: 12 hours
+      target: 1080p webdl
+      quality: 720p-1080p webdl
+  #- Severance:
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  #- How to Sell Drugs Online (Fast):
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  #- Scorpion:
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  - Mr. Robot:
+      identified_by: ep
+      season_packs: yes
+      timeframe: 12 hours
+      target: 1080p webdl
+      quality: 720p-1080p webdl
+  #- The Queen's Gambit:
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  #- "Monster: The Jeffrey Dahmer Story":
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  - Silicon Valley:
+      identified_by: ep
+      season_packs: yes
+      timeframe: 12 hours
+      target: 1080p webdl
+      quality: 720p-1080p webdl
+  #- Only Murders in the Building:
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  #- Black Mirror:
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  #- 3 Body Problem:
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  #- Succession:
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  - The Boys:
+      identified_by: ep
+      season_packs: yes
+      timeframe: 12 hours
+      target: 1080p webdl
+      quality: 720p-1080p webdl
+  #- Squid Game:
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  - Daredevil:
+      identified_by: ep
+      season_packs: yes
+      timeframe: 12 hours
+      target: 1080p webdl
+      quality: 720p-1080p webdl
+  #- Loki:
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  #- The Bear:
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  - Young Sheldon:
+      identified_by: ep
+      season_packs: yes
+      timeframe: 12 hours
+      target: 1080p webdl
+      quality: 720p-1080p webdl
+  #- Maid:
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  - Baby Reindeer:
+      identified_by: ep
+      season_packs: yes
+      timeframe: 12 hours
+      target: 1080p webdl
+      quality: 720p-1080p webdl
+  #- Limitless (2015):
+  #    exact: yes
+  #    identified_by: ep
+  #    season_packs: yes
+  #    timeframe: 12 hours
+  #    target: 1080p webdl
+  #    quality: 720p-1080p webdl
+  - The Big Bang Theory:
+      exact: yes
+      identified_by: ep
+      season_packs: yes
+      timeframe: 12 hours
+      target: 1080p webdl
+      quality: 720p-1080p webdl
 
 exists_series:
   - "/series"

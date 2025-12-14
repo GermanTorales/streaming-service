@@ -126,6 +126,8 @@ case "$MEDIA_TYPE" in
   ;;
 esac
 
+TMP_FILE="$TEMP_DIR/$(basename "$DST_FILE")"
+
 for acodec in $acodecs_list; do
   if [[ ! "$acodec" =~ ^($SUPPORTED_CODECS|unknown)$ ]]; then
     log "Transcoding required → Target codec: AAC ($AUDIO_BITRATE)"
@@ -139,8 +141,6 @@ done
 if [ "$needs_transcoding" = true ]; then
   if command -v ffmpeg >/dev/null 2>&1; then
     echo "[INFO] Transcoding incopatibles audio streams to AAC"
-
-    TMP_FILE="$TEMP_DIR/$(basename "$DST_FILE")"
 
     if ffmpeg -hide_banner -loglevel error -hwaccel auto -y -i "$SRC" \
       -map 0 -c:v copy -c:s copy -c:a aac -b:a "$AUDIO_BITRATE" $AUDIO_CHANNELS "$TMP_FILE"; then

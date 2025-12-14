@@ -65,6 +65,10 @@ schedules:
     interval:
       hours: 1
   - tasks:
+      - manual_tv
+    interval:
+      hours: 4
+  - tasks:
       - organize_movies
     interval:
       hours: 2
@@ -75,4 +79,4 @@ schedules:
   - tasks:
       - movie_subtitles
     interval:
-      minutes: 45
+      hours: 12

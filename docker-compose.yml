@@ -127,4 +127,6 @@ services:
       - /mnt/storage/movies:/movies
       - /mnt/storage/series:/tv
       - /mnt/storage/animes:/animes
+      - /mnt/storage/downloads/movies/complete:/movies_downloaded
+      - /mnt/storage/downloads/series/complete:/tv_downloaded
       - ./samba/smb.conf:/etc/samba/smb.conf:ro

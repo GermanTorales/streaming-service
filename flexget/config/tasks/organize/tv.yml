@@ -1,28 +1,31 @@
 priority: 3
 
 filesystem:
-  path: '/downloads/series/complete'
+  path: "/downloads/series/complete"
   regexp: '.*\.(avi|mkv|mp4)$'
   recursive: yes
 
+metainfo_series: yes
+
 accept_all: yes
-seen: local
+
+require_field:
+  - series_name
+  - series_season
+  - series_episode
+
 thetvdb_lookup: yes
 tmdb_lookup: yes
 
-series:
-  settings:
-    default:
-      parse_only: yes
-
-require_field: [series_name, series_season, series_episode]
-
 set:
-  series_dir: "/series/{{ series_name }}{% if series_year %} ({{ series_year }}){% endif %}{% if tvdb_id %} {{{{ tvdb_id }}}}{% endif %}/Season {{ '%02d'|format(series_season) }}"
-  series_dst: "{{ series_name }} - S{{ '%02d'|format(series_season) }}E{{ '%02d'|format(series_episode) }}{% if series_ep_name %} - {{ series_ep_name }}{% endif %}{% if quality %} {{ quality }}{% endif %}{{ location | pathext }}"
+  location: "{{ location | pathstring }}"
+  series_dir: "/series/{{ series_name|replace('.', ' ') }}{% if series_year %} ({{ series_year }}){% endif %}{% if tvdb_id %} { {{ tvdb_id }} }{% endif %}/Season {{ '%02d'|format(series_season) }}"
+  series_dst: "{{ series_name|replace('.', ' ') }} - S{{ '%02d'|format(series_season) }}E{{ '%02d'|format(series_episode) }}{% if series_ep_name is defined %} - {{ series_ep_name }}{% endif %}{% if quality %} {{ quality }}{% endif %}{{ location | pathext }}"
 
 exec:
   auto_escape: yes
   on_output:
     for_entries: |
       /config/scripts/process_media.sh "{{ location }}" "{{ series_dir }}" "{{ series_dst }}" "tv"
+
+seen: local
