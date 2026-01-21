@@ -111,6 +111,23 @@ services:
       - ${MEDIA_PATH}/animes:/animes:ro
     restart: unless-stopped
 
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    network_mode: host
+    hostname: jellyfin
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    volumes:
+      - ./jellyfin/config:/config
+      - ./jellyfin/cache:/cache
+      - ${MEDIA_PATH}/movies:/movies:ro
+      - ${MEDIA_PATH}/series:/series:ro
+      - ${MEDIA_PATH}/animes:/animes:ro
+    restart: unless-stopped
+
   samba:
     image: servercontainers/samba
     container_name: samba

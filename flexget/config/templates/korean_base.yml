@@ -1,0 +1,10 @@
+template: media_base
+priority: 10
+imdb_lookup: yes
+tmdb_lookup: yes
+content_size:
+  max: 150000
+  min: 500
+regexp:
+  accept:
+    - (?i)\b(korean|multi-sub|vxt|next)\b: { from: title }

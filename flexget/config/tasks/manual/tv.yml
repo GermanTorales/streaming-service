@@ -21,21 +21,40 @@ discover:
         category: Video
     - limetorrents:
         category: tv
+    - nyaa:
+        category: liveact eng
   interval: 12 hours
 
 series:
+  settings:
+    main:
+      exact: yes
+      identified_by: ep
+      season_packs: yes
+      timeframe: 12 hours
+      target: 1080p webdl
+      quality: 720p-1080p webdl bluray
+  main:
+    - The Playlist 2022
+    - Better Call Saul
+    - Rick and Morty
+    - Mr. Robot
+    - The Boys
+    - Silicon Valley
+    - Daredevil
+    - Young Sheldon
+    - Baby Reindeer
+    - The Big Bang Theory
+    - "Pablo Escobar: El Patrón del Mal"
+    - The Investigation
   #- Dopesick:
   #    identified_by: ep
   #    season_packs: yes
   #    timeframe: 12 hours
   #    target: 1080p webdl
   #    quality: 720p-1080p webdl
-  - Playlist:
-      identified_by: ep
-      season_packs: yes
-      timeframe: 12 hours
-      target: 1080p webdl
-      quality: 720p-1080p webdl
+  #The Playlist 2022:
+  #  exact: yes
   #- "El Encargado":
   #    identified_by: ep
   #    season_packs: yes
@@ -48,24 +67,14 @@ series:
   #    timeframe: 12 hours
   #    target: 1080p webdl
   #    quality: 720p-1080p webdl
-  - Better Call Saul:
-      identified_by: ep
-      season_packs: yes
-      timeframe: 12 hours
-      target: 1080p webdl
-      quality: 720p-1080p webdl
+  #Better Call Saul: {}
   #- "Avatar: The Last Airbender":
   #    identified_by: ep
   #    season_packs: yes
   #    timeframe: 12 hours
   #    target: 1080p webdl
   #    quality: 720p-1080p webdl
-  - "Rick and Morty":
-      identified_by: ep
-      season_packs: yes
-      timeframe: 12 hours
-      target: 1080p webdl
-      quality: 720p-1080p webdl
+  #"Rick and Morty": {}
   #- Severance:
   #    identified_by: ep
   #    season_packs: yes
@@ -84,12 +93,7 @@ series:
   #    timeframe: 12 hours
   #    target: 1080p webdl
   #    quality: 720p-1080p webdl
-  - Mr. Robot:
-      identified_by: ep
-      season_packs: yes
-      timeframe: 12 hours
-      target: 1080p webdl
-      quality: 720p-1080p webdl
+  #Mr. Robot: {}
   #- The Queen's Gambit:
   #    identified_by: ep
   #    season_packs: yes
@@ -102,12 +106,7 @@ series:
   #    timeframe: 12 hours
   #    target: 1080p webdl
   #    quality: 720p-1080p webdl
-  - Silicon Valley:
-      identified_by: ep
-      season_packs: yes
-      timeframe: 12 hours
-      target: 1080p webdl
-      quality: 720p-1080p webdl
+  #Silicon Valley: {}
   #- Only Murders in the Building:
   #    identified_by: ep
   #    season_packs: yes
@@ -132,24 +131,15 @@ series:
   #    timeframe: 12 hours
   #    target: 1080p webdl
   #    quality: 720p-1080p webdl
-  - The Boys:
-      identified_by: ep
-      season_packs: yes
-      timeframe: 12 hours
-      target: 1080p webdl
-      quality: 720p-1080p webdl
+  #The Boys: {}
   #- Squid Game:
   #    identified_by: ep
   #    season_packs: yes
   #    timeframe: 12 hours
   #    target: 1080p webdl
   #    quality: 720p-1080p webdl
-  - Daredevil:
-      identified_by: ep
-      season_packs: yes
-      timeframe: 12 hours
-      target: 1080p webdl
-      quality: 720p-1080p webdl
+  #Daredevil:
+  #  exact: yes
   #- Loki:
   #    identified_by: ep
   #    season_packs: yes
@@ -162,24 +152,14 @@ series:
   #    timeframe: 12 hours
   #    target: 1080p webdl
   #    quality: 720p-1080p webdl
-  - Young Sheldon:
-      identified_by: ep
-      season_packs: yes
-      timeframe: 12 hours
-      target: 1080p webdl
-      quality: 720p-1080p webdl
+  #Young Sheldon: {}
   #- Maid:
   #    identified_by: ep
   #    season_packs: yes
   #    timeframe: 12 hours
   #    target: 1080p webdl
   #    quality: 720p-1080p webdl
-  - Baby Reindeer:
-      identified_by: ep
-      season_packs: yes
-      timeframe: 12 hours
-      target: 1080p webdl
-      quality: 720p-1080p webdl
+  #Baby Reindeer: {}
   #- Limitless (2015):
   #    exact: yes
   #    identified_by: ep
@@ -187,13 +167,8 @@ series:
   #    timeframe: 12 hours
   #    target: 1080p webdl
   #    quality: 720p-1080p webdl
-  - The Big Bang Theory:
-      exact: yes
-      identified_by: ep
-      season_packs: yes
-      timeframe: 12 hours
-      target: 1080p webdl
-      quality: 720p-1080p webdl
+  #The Big Bang Theory:
+  #  exact: yes
 
 exists_series:
   - "/series"

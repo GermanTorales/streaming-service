@@ -19,6 +19,9 @@ templates:
   tv_base:
     include: /config/templates/tv_base.yml
 
+  korean_base:
+    include: /config/templates/korean_base.yml
+
   anime_base:
     include: /config/templates/anime_base.yml
 
@@ -37,6 +40,9 @@ tasks:
 
   manual_animes:
     include: /config/tasks/manual/anime.yml
+
+  manual_korean:
+    include: /config/tasks/manual/korean.yml
 
   movie_subtitles:
     include: /config/tasks/manual/movie_subtitles.yml

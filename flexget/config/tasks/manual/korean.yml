@@ -1,0 +1,54 @@
+template:
+  - korean_base
+  - transmission_client
+
+accept_all: yes
+
+discover:
+  release_estimations: loose
+  what:
+    - next_series_seasons:
+        from_start: yes
+        backfill: yes
+  from:
+    - 1337x:
+        order_by: seeders
+    - piratebay:
+        category: tv
+    - limetorrents:
+        category: tv
+    - nyaa:
+        category: liveact
+  interval: 6 hours
+
+series:
+  settings:
+    kdrama_style:
+      exact: no
+      identified_by: ep
+      season_packs: yes
+      qualities:
+        - 720p-1080p hdtv
+        - 720p-1080p webdl
+        - 720p-1080p webrip
+        - 720p-1080p bluray
+      upgrade: yes
+      target: 1080p webdl
+
+  kdrama_style:
+    - "Start-Up":
+        alternate_name:
+          - Start-Up 2019
+
+exists_series:
+  - "/series"
+
+transmission:
+  path: "/downloads/series/complete"
+  ratio: 2.0
+
+sort_by:
+  field: quality
+  reverse: yes
+
+limit_new: 1
